@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "name": "dimibamboo",
+  "alias": "bamboo.dimigo.dev",
+  "builds": [
+    { "src": "www/next.config.js", "use": "@now/next" },
+    { "src": "server/src/routes/**/*.ts", "use": "@now/node" }
+  ],
+  "routes": [
+    { "src": "/api/posts/(.*)", "dest": "/server/src/routes/posts" },
+    { "src": "/api/verify/(.*)", "dest": "/server/src/routes/verify" },
+    { "src": "/api/(.*)", "dest": "/server/src/routes/$1" },
+    { "src": "/(.*)", "dest": "/www/$1" }
+  ],
+  "env": {
+    "MONGO_HOST": "@mongo_host",
+    "ADMIN_PASSWORD": "@admin_password",
+    "BASE_URL": ""
+  }
+}
