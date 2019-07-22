@@ -1,7 +1,6 @@
 {
   "version": 2,
   "name": "dimibamboo",
-  "alias": "bamboo.dimigo.dev",
   "builds": [
     { "src": "www/next.config.js", "use": "@now/next" },
     { "src": "server/src/routes/**/*.ts", "use": "@now/node" }
