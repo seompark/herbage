@@ -52,7 +52,11 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
       <style jsx>{`
         h1 {
           font-family: 'Spoqa Han Sans', sans-serif;
-          margin-bottom: 3rem;
+          margin-bottom: 2rem;
+        }
+
+        h1 > span {
+          font-family: 'Spoqa Han Sans', sans-serif;
         }
       `}</style>
     </>
