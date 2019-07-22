@@ -7,7 +7,7 @@ import Verifier from '../../models/Verifier'
 const router = new Router()
 
 router.get('/', async ctx => {
-  const count = await Verifier.count({}).exec()
+  const count = await Verifier.countDocuments({}).exec()
   const random = Math.floor(Math.random() * count)
   const result = await Verifier.findOne().skip(random).exec()
 
