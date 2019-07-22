@@ -10,7 +10,7 @@ function Card ({ post }) {
     <div className='card'>
       <h3>
         <a href={post.fbLink} target='_blank'>{post.number}번째 제보</a>
-        <span><FiArrowLeft style={{ verticalAlign: 'middle' }} /> 페이스북에서 확인</span>
+        <span class='check-fb'><FiArrowLeft style={{ verticalAlign: 'middle' }} /> 페이스북에서 확인</span>
       </h3>
       <span>{ format(post.date, 'YYYY년 MM월 DD일 HH시 mm분') }</span>
       { post.title && <h4>{post.title}</h4> }
@@ -39,6 +39,10 @@ function Card ({ post }) {
       <style jsx>{`
         .card {
           margin-bottom: 2.5rem;
+        }
+
+        .check-fb {
+          font-family: 'Spoqa Han Sans', sans-serif;
         }
 
         h3 {
