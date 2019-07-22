@@ -17,7 +17,9 @@ function ThemeWrapper ({ children }) {
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css' />
         <link rel='stylesheet' href={`https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/${cookies.theme || 'light'}.css`} />
       </Head>
-      <ThemeContext.Provider value={[cookies.theme, theme => setCookie('theme', theme, { path: '/' })]}>
+      <ThemeContext.Provider value={
+        [cookies.theme, theme => setCookie('theme', theme, { path: '/', maxAge: 60 * 60 * 24 * 365 })]
+      }>
         { children }
       </ThemeContext.Provider>
       <ToastContainer />
