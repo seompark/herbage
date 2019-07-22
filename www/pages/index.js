@@ -1,13 +1,35 @@
-import { useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { toast } from 'react-toastify'
 import Form from '../src/components/Form'
 import Card from '../src/components/Card'
 import ThemeContext from '../src/contexts/ThemeContext'
 import { getVerifier } from '../src/api/verifier'
 import { getPosts, createPost } from '../src/api/posts'
+import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 
 export default function Index ({ posts, cursor, hasNext, verifier }) {
+  const [morePosts, setMorePosts] = useState([])
   const [theme, setTheme] = useContext(ThemeContext)
+  const [isFetching, setIsFetching] = useInfiniteScroll(async () => {
+    try {
+      const fetchedPosts = await getPosts(10, cursor)
+      setMorePosts([
+        ...morePosts,
+        ...fetchedPosts
+      ])
+    } catch (err) {
+      toast.error('새 글을 불러오던 도중 문제가 생겼습니다.')
+      setIsFetching(false) // allows retry
+    }
+  }, {
+    threshold: 500,
+    hasNext
+  })
+
+  useEffect(() => {
+    if (!isFetching) return
+    setIsFetching(false)
+  }, [morePosts])
 
   const handleSubmit = async (data, reset) => {
     try {
@@ -49,6 +71,17 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
           post={post}
           key={post.id} />
       ))}
+      {morePosts && morePosts.map(post => (
+        <Card
+          post={post}
+          key={post.id} />
+      ))}
+      { isFetching && <div className='info-text'>
+        로딩 중...
+      </div>}
+      { !hasNext && <div className='info-text'>
+        마지막 글입니다.
+      </div>}
       <style jsx>{`
         h1 {
           font-family: 'Spoqa Han Sans', sans-serif;
@@ -58,13 +91,20 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
         h1 > span {
           font-family: 'Spoqa Han Sans', sans-serif;
         }
+
+        .info-text {
+          text-align: center;
+          font-size: 14px;
+          font-family: 'Spoqa Han Sans', sans-serif;
+          color: #41adff;
+        }
       `}</style>
     </>
   )
 }
 
 Index.getInitialProps = async ctx => {
-  const posts = await getPosts()
+  const posts = await getPosts(15)
   const verifier = await getVerifier()
 
   return {
