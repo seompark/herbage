@@ -121,6 +121,9 @@ function Form ({ onSubmit, verifier }) {
       </button>
       {spinAnimation.styles}
       <style jsx>{`
+        * {
+          font-family: 'Spoqa Han Sans', sans-serif;
+        }
         input {
           display: inline-block !important;
         }

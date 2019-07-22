@@ -37,7 +37,7 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
   return (
     <>
       <h1>
-        디<span style={{ fontSize: 14 }}>미고</span>대<span style={{ fontSize: 14 }}>나무</span>숲 Beta
+        디<span style={{ fontSize: 14 }}>미고</span>대<span style={{ fontSize: 14 }}>나무</span>숲
         <button
           style={{ fontSize: 16, float: 'right' }}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -51,6 +51,7 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
       ))}
       <style jsx>{`
         h1 {
+          font-family: 'Spoqa Han Sans', sans-serif;
           margin-bottom: 3rem;
         }
       `}</style>
