@@ -4,6 +4,7 @@ import ThemeContext from '../src/contexts/ThemeContext'
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import axios from '../src/api/axios'
 
 function ThemeWrapper ({ children }) {
   const [cookies, setCookie] = useCookies(['theme'])
@@ -26,6 +27,10 @@ function ThemeWrapper ({ children }) {
 
 class CustomApp extends App {
   static async getInitialProps ({ Component, ctx }) {
+    const proto = ctx.req ? ctx.req.headers['x-forwarded-proto'] : window.location.protocol
+    const host = ctx.req ? (ctx.req.headers['x-forwarded-host'] || ctx.req.headers.host) : window.location.host
+    axios.defaults.baseURL = `${proto}://${host}/`
+
     return {
       pageProps: typeof Component.getInitialProps === 'function'
         ? await Component.getInitialProps(ctx) : {},

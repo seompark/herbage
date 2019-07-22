@@ -13,7 +13,6 @@
   ],
   "env": {
     "MONGO_HOST": "@mongo_host",
-    "ADMIN_PASSWORD": "@admin_password",
-    "BASE_URL": ""
+    "ADMIN_PASSWORD": "@admin_password"
   }
 }
