@@ -41,7 +41,7 @@ router.post('/', validatorMiddleware(NewPost), async ctx => {
 
   // https://stackoverflow.com/questions/19199872/best-practice-for-restful-post-response
   ctx.status = 201
-  ctx.header['Location'] = '/api/posts/' + result.number
+  ctx.set('Location', '/api/posts/' + result.id)
   ctx.body = result.getPublicFields()
 })
 
