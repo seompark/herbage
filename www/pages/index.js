@@ -7,15 +7,19 @@ import { getVerifier } from '../src/api/verifier'
 import { getPosts, createPost } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 
-export default function Index ({ posts, cursor, hasNext, verifier }) {
-  const [morePosts, setMorePosts] = useState([])
+export default function Index ({ postData, verifier }) {
+  const [posts, setPosts] = useState(postData.posts.slice())
+  const [cursor, setCursor] = useState(postData.cursor)
+  const [hasNext, setHasNext] = useState(postData.hasNext)
   const [theme, setTheme] = useContext(ThemeContext)
   const [isFetching, setIsFetching] = useInfiniteScroll(async () => {
     try {
       const fetchedPosts = await getPosts(10, cursor)
-      setMorePosts([
-        ...morePosts,
-        ...fetchedPosts
+      setCursor(fetchedPosts.data.cursor)
+      setHasNext(fetchedPosts.data.hasNext)
+      setPosts([
+        ...posts,
+        ...fetchedPosts.data.posts
       ])
     } catch (err) {
       toast.error('새 글을 불러오던 도중 문제가 생겼습니다.')
@@ -29,7 +33,7 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
   useEffect(() => {
     if (!isFetching) return
     setIsFetching(false)
-  }, [morePosts])
+  }, [posts])
 
   const handleSubmit = async (data, reset) => {
     try {
@@ -71,11 +75,6 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
           post={post}
           key={post.id} />
       ))}
-      {morePosts && morePosts.map(post => (
-        <Card
-          post={post}
-          key={post.id} />
-      ))}
       { isFetching && <div className='info-text'>
         로딩 중...
       </div>}
@@ -104,13 +103,11 @@ export default function Index ({ posts, cursor, hasNext, verifier }) {
 }
 
 Index.getInitialProps = async ctx => {
-  const posts = await getPosts(15)
+  const postData = await getPosts(15)
   const verifier = await getVerifier()
 
   return {
-    posts: posts.data.posts,
-    cursor: posts.data.cursor,
-    hasNext: posts.data.hasNext,
+    postData: postData.data,
     verifier: verifier.data
   }
 }
