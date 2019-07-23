@@ -1,8 +1,11 @@
 import * as Koa from 'koa'
 import * as logger from 'koa-logger'
 import * as bodyParser from 'koa-bodyparser'
+import * as json from 'koa-json'
 import * as Router from 'koa-router'
 import * as mongoose from 'mongoose'
+const conditional = require('koa-conditional-get')
+const etag = require('koa-etag')
 
 mongoose.connect(process.env.MONGO_HOST || '', {
   useFindAndModify: false,
@@ -15,6 +18,9 @@ export function createApp(routerPath: string, router: Router) {
   const app = new Koa()
   const rootRouter = new Router()
 
+  app.use(json())
+  app.use(conditional())
+  app.use(etag())
   app.use(logger())
   app.use(bodyParser())
 
