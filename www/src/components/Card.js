@@ -41,6 +41,10 @@ function Card ({ post }) {
           margin-bottom: 2.5rem;
         }
 
+        .card * {
+          font-family: 'Iropke Batang', serif;
+        }
+
         h3 {
           display: flex;
           align-items: center;
