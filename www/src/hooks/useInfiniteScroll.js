@@ -13,15 +13,20 @@ const useInfiniteScroll = (callback, { threshold = 500, hasNext }) => {
     callback()
   }, [isFetching])
 
-  function handleScroll () {
+  function handleScroll() {
     if (!hasNext) return
 
-    const scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-    const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
+    const scrollHeight = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight
+    )
+    const scrollTop = Math.max(
+      document.documentElement.scrollTop,
+      document.body.scrollTop
+    )
     const clientHeight = document.documentElement.clientHeight
-    if (scrollTop + clientHeight <=
-      scrollHeight - threshold ||
-      isFetching) return
+    if (scrollTop + clientHeight <= scrollHeight - threshold || isFetching)
+      return
 
     setIsFetching(true)
   }

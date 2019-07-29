@@ -1,13 +1,13 @@
-function TextArea ({ onUpdate, ...props }) {
+import PropTypes from 'prop-types'
+
+function TextArea({ onUpdate, ...props }) {
   const handleChange = event => {
     onUpdate(event.target.value)
   }
 
   return (
     <>
-      <textarea
-        {...props}
-        onChange={handleChange} />
+      <textarea {...props} onChange={handleChange} />
       <style jsx>{`
         textarea {
           height: 5rem;
@@ -25,6 +25,10 @@ function TextArea ({ onUpdate, ...props }) {
       `}</style>
     </>
   )
+}
+
+TextArea.propTypes = {
+  onUpdate: PropTypes.func
 }
 
 export default TextArea

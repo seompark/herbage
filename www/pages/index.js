@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
+import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
 import Form from '../src/components/Form'
 import Card from '../src/components/Card'
@@ -7,28 +8,28 @@ import { getVerifier } from '../src/api/verifier'
 import { getPosts, createPost } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 
-export default function Index ({ postData, verifier }) {
+export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
   const [theme, setTheme] = useContext(ThemeContext)
-  const [isFetching, setIsFetching] = useInfiniteScroll(async () => {
-    try {
-      const fetchedPosts = await getPosts(10, cursor)
-      setCursor(fetchedPosts.data.cursor)
-      setHasNext(fetchedPosts.data.hasNext)
-      setPosts([
-        ...posts,
-        ...fetchedPosts.data.posts
-      ])
-    } catch (err) {
-      toast.error('새 글을 불러오던 도중 문제가 생겼습니다.')
-      setIsFetching(false) // allows retry
+  const [isFetching, setIsFetching] = useInfiniteScroll(
+    async () => {
+      try {
+        const fetchedPosts = await getPosts(10, cursor)
+        setCursor(fetchedPosts.data.cursor)
+        setHasNext(fetchedPosts.data.hasNext)
+        setPosts([...posts, ...fetchedPosts.data.posts])
+      } catch (err) {
+        toast.error('새 글을 불러오던 도중 문제가 생겼습니다.')
+        setIsFetching(false) // allows retry
+      }
+    },
+    {
+      threshold: 500,
+      hasNext
     }
-  }, {
-    threshold: 500,
-    hasNext
-  })
+  )
 
   useEffect(() => {
     if (!isFetching) return
@@ -63,24 +64,19 @@ export default function Index ({ postData, verifier }) {
   return (
     <>
       <h1>
-        디<span style={{ fontSize: 14 }}>미고</span>대<span style={{ fontSize: 14 }}>나무</span>숲
+        디<span style={{ fontSize: 14 }}>미고</span>대
+        <span style={{ fontSize: 14 }}>나무</span>숲
         <button
           style={{ fontSize: 16, float: 'right' }}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >{theme === 'dark' ? '밝은' : '어두운'} 테마</button>
+        >
+          {theme === 'dark' ? '밝은' : '어두운'} 테마
+        </button>
       </h1>
       <Form onSubmit={handleSubmit} verifier={verifier} />
-      {posts && posts.map(post => (
-        <Card
-          post={post}
-          key={post.id} />
-      ))}
-      { isFetching && <div className='info-text'>
-        로딩 중...
-      </div>}
-      { !hasNext && <div className='info-text'>
-        마지막 글입니다.
-      </div>}
+      {posts && posts.map(post => <Card post={post} key={post.id} />)}
+      {isFetching && <div className="info-text">로딩 중...</div>}
+      {!hasNext && <div className="info-text">마지막 글입니다.</div>}
       <style jsx>{`
         h1 {
           font-family: 'Spoqa Han Sans', sans-serif;
@@ -110,4 +106,16 @@ Index.getInitialProps = async ctx => {
     postData: postData.data,
     verifier: verifier.data
   }
+}
+
+Index.propTypes = {
+  postData: PropTypes.exact({
+    posts: PropTypes.array.isRequired,
+    cursor: PropTypes.string.isRequired,
+    hasNext: PropTypes.bool
+  }),
+  verifier: PropTypes.exact({
+    id: PropTypes.string.isRequired,
+    question: PropTypes.string.isRequired
+  })
 }

@@ -1,5 +1,3 @@
-function StatusChip ({ status }) {
-
-}
+function StatusChip({ status }) {}
 
 export default StatusChip

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
 import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
@@ -22,7 +23,7 @@ const spinAnimation = css.resolve`
   }
 `
 
-function Form ({ onSubmit, verifier }) {
+function Form({ onSubmit, verifier }) {
   const [title, setTitle] = useState('')
   const [answer, setAnswer] = useState('')
   const [content, setContent] = useState('')
@@ -52,13 +53,16 @@ function Form ({ onSubmit, verifier }) {
     }
 
     setLoading(true)
-    await onSubmit({
-      content,
-      title,
-      verifier,
-      answer,
-      tag
-    }, reset)
+    await onSubmit(
+      {
+        content,
+        title,
+        verifier,
+        answer,
+        tag
+      },
+      reset
+    )
     setLoading(false)
   }
 
@@ -74,50 +78,62 @@ function Form ({ onSubmit, verifier }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor='title-input'>제목 (선택)</label>
+      <label htmlFor="title-input">제목 (선택)</label>
       <input
-        id='title-input'
+        id="title-input"
         value={title}
         onChange={e => setTitle(e.target.value)}
         onKeyPress={preventSubmitOnEnter}
         style={{ width: '25%', minWidth: 250 }}
-        type='text'
-        placeholder='제목 (선택)'
+        type="text"
+        placeholder="제목 (선택)"
       />
-      <label htmlFor='cert-input'>학생 인증</label>
+      <label htmlFor="cert-input">학생 인증</label>
       <input
-        id='cert-input'
+        id="cert-input"
         value={answer}
         onChange={e => setAnswer(e.target.value)}
         onKeyPress={preventSubmitOnEnter}
         style={{ width: '40%', minWidth: 250 }}
-        type='text'
+        type="text"
         placeholder={verifier.question}
         required
       />
-      <label htmlFor='tag-select'>태그 선택</label>
+      <label htmlFor="tag-select">태그 선택</label>
       <select
-        id='tag-select'
+        id="tag-select"
         value={tag}
         onChange={e => setTag(e.target.value)}
         options={tags}
         required
       >
-        <option value='' disabled hidden>태그 선택</option>
-        { tags.map((v, i) => <option value={v} key={i}>{v}</option>) }
+        <option value="" disabled hidden>
+          태그 선택
+        </option>
+        {tags.map((v, i) => (
+          <option value={v} key={i}>
+            {v}
+          </option>
+        ))}
       </select>
-      <label htmlFor='content-textarea'>내용</label>
+      <label htmlFor="content-textarea">내용</label>
       <TextArea
-        id='content-textarea'
+        id="content-textarea"
         value={content}
         onUpdate={setContent}
-        placeholder='타인을 향한 욕설 및 비방은 징계 대상입니다. (최대 3000자)'
+        placeholder="타인을 향한 욕설 및 비방은 징계 대상입니다. (최대 3000자)"
         required
       />
-      <button type='submit'>
-        { !isLoading ? (
-          submitChecked ? '한번 더 클릭하세요' : '제보하기'
-        ) : <FiLoader className={classNames('spin', spinAnimation.className)} /> }
+      <button type="submit">
+        {!isLoading ? (
+          submitChecked ? (
+            '한번 더 클릭하세요'
+          ) : (
+            '제보하기'
+          )
+        ) : (
+          <FiLoader className={classNames('spin', spinAnimation.className)} />
+        )}
       </button>
       {spinAnimation.styles}
       <style jsx>{`
@@ -140,6 +156,14 @@ function Form ({ onSubmit, verifier }) {
       `}</style>
     </form>
   )
+}
+
+Form.propTypes = {
+  onSubmit: PropTypes.func,
+  verifier: PropTypes.exact({
+    id: PropTypes.string.isRequired,
+    question: PropTypes.string.isRequired
+  })
 }
 
 export default Form
