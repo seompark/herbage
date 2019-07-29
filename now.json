@@ -13,6 +13,7 @@
   ],
   "env": {
     "MONGO_HOST": "@mongo_host",
-    "ADMIN_PASSWORD": "@admin_password"
+    "ADMIN_PASSWORD": "@admin_password",
+    "JWT_SECRET": "@jwt_secret"
   }
 }
