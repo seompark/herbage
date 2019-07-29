@@ -22,7 +22,7 @@ export interface PostPublicFields {
   title?: string
   content: string
   fbLink?: string
-  date: number
+  createdAt: number
 }
 
 export class PostHistory {
@@ -113,7 +113,7 @@ class Post extends Typegoose {
       title: this.title,
       content: this.content,
       fbLink: this.fbLink,
-      date: this.createdAt.getTime()
+      createdAt: this.createdAt.getTime()
     }
   }
 
