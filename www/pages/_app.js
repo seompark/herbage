@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types'
 import App, { Container } from 'next/app'
 import Head from 'next/head'
-import ThemeContext from '../src/contexts/ThemeContext'
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ThemeContext from '../src/contexts/ThemeContext'
 import axios from '../src/api/axios'
 
 function ThemeWrapper({ children }) {
@@ -36,6 +37,10 @@ function ThemeWrapper({ children }) {
       <ToastContainer />
     </>
   )
+}
+
+ThemeWrapper.propTypes = {
+  children: PropTypes.object
 }
 
 class CustomApp extends App {

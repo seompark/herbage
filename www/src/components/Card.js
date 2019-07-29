@@ -1,5 +1,6 @@
-import { format } from 'date-fns'
 import { useState } from 'react'
+import PropTypes from 'prop-types'
+import { format } from 'date-fns'
 import { FiArrowLeft } from 'react-icons/fi'
 
 function Card({ post }) {
@@ -17,7 +18,7 @@ function Card({ post }) {
           <FiArrowLeft style={{ verticalAlign: 'middle' }} /> 페이스북에서 확인
         </span>
       </h3>
-      <span>{format(post.date, 'YYYY년 MM월 DD일 HH시 mm분')}</span>
+      <span>{format(post.createdAt, 'YYYY년 MM월 DD일 HH시 mm분')}</span>
       {post.title && <h4>{post.title}</h4>}
       {(isLong && !showMore
         ? post.content
@@ -93,6 +94,17 @@ function Card({ post }) {
       `}</style>
     </div>
   )
+}
+
+Card.propTypes = {
+  post: PropTypes.exact({
+    id: PropTypes.string.isRequired,
+    number: PropTypes.number.isRequired,
+    title: PropTypes.string,
+    content: PropTypes.string.isRequired,
+    fbLink: PropTypes.string.isRequired,
+    date: PropTypes.number
+  })
 }
 
 export default Card

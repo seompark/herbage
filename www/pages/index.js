@@ -7,6 +7,7 @@ import ThemeContext from '../src/contexts/ThemeContext'
 import { getVerifier } from '../src/api/verifier'
 import { getPosts, createPost } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
+import axios from '../src/api/axios'
 
 export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
@@ -99,6 +100,8 @@ export default function Index({ postData, verifier }) {
 }
 
 Index.getInitialProps = async ctx => {
+  delete axios.defaults.headers['Authorization']
+
   const postData = await getPosts(15)
   const verifier = await getVerifier()
 
