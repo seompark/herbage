@@ -1,22 +1,22 @@
-import { Schema } from 'mongoose';
-import { instanceMethod, InstanceType, prop, Typegoose } from 'typegoose';
+import { Schema } from 'mongoose'
+import { instanceMethod, InstanceType, prop, Typegoose } from 'typegoose'
 
 class Verifier extends Typegoose {
-  _id: Schema.Types.ObjectId
+  public _id: Schema.Types.ObjectId
 
   @prop({ required: true })
-  question: string
+  public question: string
 
   @prop({ required: true })
-  answer: string
+  public answer: string
 
   @prop()
-  get id() {
+  public get id(): string {
     return Base64.encode(this._id.toString())
   }
 
   @instanceMethod
-  isCorrect(this: InstanceType<Verifier>, target: string) {
+  public isCorrect(this: InstanceType<Verifier>, target: string): boolean {
     return this.answer === target
   }
 }

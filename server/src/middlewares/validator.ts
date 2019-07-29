@@ -7,8 +7,8 @@ import * as createError from 'http-errors'
 export default function validatorMiddleware<T>(
   schema: ClassType<T>,
   options: { where: keyof Request } = { where: 'body' }
-) {
-  return async (ctx: Context, next: () => Promise<any>) => {
+): (ctx: Context, next: () => Promise<unknown>) => Promise<void> {
+  return async (ctx: Context, next: () => Promise<unknown>): Promise<void> => {
     const data = plainToClass(schema, ctx.request[options.where], {
       excludeExtraneousValues: true
     })

@@ -7,8 +7,10 @@ import * as createError from 'http-errors'
  *
  * @param options
  */
-export default function authMiddleware(options: { continue: boolean } = { continue: true }) {
-  return async (ctx: Context, next: () => Promise<any>) => {
+export default function authMiddleware(
+  options: { continue: boolean } = { continue: true }
+): (ctx: Context, next: () => Promise<unknown>) => Promise<void> {
+  return async (ctx: Context, next: () => Promise<unknown>): Promise<void> => {
     if (!ctx.header.authorization) {
       if (options.continue) {
         ctx.isAdmin = false
@@ -16,7 +18,9 @@ export default function authMiddleware(options: { continue: boolean } = { contin
         return
       } else throw new createError.Unauthorized()
     }
-    ctx.isAdmin = Base64.decode(ctx.header.authorization.replace('Basic ', '')) === process.env.ADMIN_PASSWORD
+    ctx.isAdmin =
+      Base64.decode(ctx.header.authorization.replace('Basic ', '')) ===
+      process.env.ADMIN_PASSWORD
     if (!ctx.isAdmin && !options.continue) throw new createError.Unauthorized()
 
     await next()

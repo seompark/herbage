@@ -6,17 +6,22 @@ import Verifier from '../../models/Verifier'
 
 const router = new Router()
 
-router.get('/', async ctx => {
-  const count = await Verifier.countDocuments({}).exec()
-  const random = Math.floor(Math.random() * count)
-  const result = await Verifier.findOne().skip(random).exec()
+router.get(
+  '/',
+  async (ctx): Promise<void> => {
+    const count = await Verifier.countDocuments({}).exec()
+    const random = Math.floor(Math.random() * count)
+    const result = await Verifier.findOne()
+      .skip(random)
+      .exec()
 
-  if (!result) throw new createError.NotFound()
+    if (!result) throw new createError.NotFound()
 
-  ctx.body = {
-    id: Base64.encode(result._id),
-    question: result.question
+    ctx.body = {
+      id: Base64.encode(result._id),
+      question: result.question
+    }
   }
-})
+)
 
 export default createApp('/verifier', router)

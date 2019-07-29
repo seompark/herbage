@@ -1,64 +1,76 @@
-
 import { Type, Transform, Expose } from 'class-transformer'
-import { IsInt, IsBase64, IsOptional, IsString, ValidateNested, MinLength, Length } from 'class-validator'
+import {
+  IsInt,
+  IsBase64,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  MinLength,
+  Length
+} from 'class-validator'
 
 export class RequestQuery {
   @Expose()
-  @Transform(value => parseInt(value, 10))
+  @Transform((value): number => parseInt(value, 10))
   @IsInt()
-  count: number
+  public count: number
 
   @Expose()
   @IsOptional()
   @IsBase64()
-  cursor?: string
+  public cursor?: string
 }
 
 export class RequestVerifySchema {
   @Expose()
   @IsBase64()
-  id: string
+  public id: string
 
   @Expose()
   @IsString()
-  answer: string
+  public answer: string
 }
 
 export class NewPost {
   @Expose()
   @IsString()
   @IsOptional()
-  title?: string
+  public title?: string
 
   @Expose()
   @IsString()
   @Length(1, 3000)
-  content: string
+  public content: string
 
   @Expose()
   @IsString()
   @MinLength(1)
-  tag: string
+  public tag: string
 
   @Expose()
-  @Type(() => RequestVerifySchema)
+  @Type((): typeof RequestVerifySchema => RequestVerifySchema)
   @ValidateNested()
-  verifier: RequestVerifySchema
+  public verifier: RequestVerifySchema
 }
 
 export class EditPost {
   @Expose()
   @IsString()
   @IsOptional()
-  content?: string
+  public content?: string
 
   @Expose()
   @IsString()
   @IsOptional()
-  status?: string
+  public status?: string
 
   @Expose()
   @IsString()
   @IsOptional()
-  fbLink?: string
+  public fbLink?: string
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  public reason: string
 }

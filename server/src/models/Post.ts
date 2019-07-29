@@ -1,78 +1,112 @@
-import { Typegoose, InstanceType, prop, instanceMethod, staticMethod, ModelType, arrayProp } from 'typegoose'
+import {
+  Typegoose,
+  InstanceType,
+  prop,
+  instanceMethod,
+  staticMethod,
+  ModelType,
+  arrayProp
+} from 'typegoose'
 import { Base64 } from 'js-base64'
-import { Schema } from 'mongoose';
+import { Schema } from 'mongoose'
 
 export enum PostStatus {
   Pending = 'PENDING',
   Accepted = 'ACCEPTED',
-  Declined = 'DECLINED',
+  Rejected = 'REJECTED'
+}
+
+export interface PostPublicFields {
+  id: string
+  number?: number
+  title?: string
+  content: string
+  fbLink?: string
+  date: number
 }
 
 export class PostHistory {
-  @prop({ required: true })
-  content: string
+  @prop({ required: true, trim: true })
+  public content: string
 
-  @prop({ default: Date.now })
-  date: Date
+  @prop({ required: true })
+  public createdAt: Date
 }
 
 class Post extends Typegoose {
   // for type analysis
-  _id: Schema.Types.ObjectId
-  createdAt: Date
+  public _id: Schema.Types.ObjectId
+  public createdAt: Date
 
   @prop()
-  number?: number
+  public number?: number
 
   @prop({ trim: true })
-  title?: string
+  public title?: string
 
   @prop({ required: true, trim: true })
-  content: string
+  public content: string
 
   @prop({ enum: PostStatus, default: PostStatus.Pending })
-  status: PostStatus
+  public status: PostStatus
+
+  @prop({ trim: true })
+  public reason: string
 
   @arrayProp({ items: PostHistory, default: [] })
-  history: PostHistory[]
+  public history: PostHistory[]
 
   @prop()
-  fbLink?: string
+  public fbLink?: string
 
   @prop()
-  get cursorId() {
+  public get cursorId(): string {
     return Base64.encode(this._id.toString())
   }
 
   @prop()
-  get id() {
+  public get id(): Schema.Types.ObjectId {
     return this._id
   }
 
   @instanceMethod
-  async edit(this: InstanceType<Post>, newContent: string) {
-    this.history.push({ content: this.content, date: new Date() })
+  public async edit(
+    this: InstanceType<Post>,
+    newContent: string
+  ): Promise<InstanceType<Post>> {
+    this.history.push({ content: this.content, createdAt: new Date() })
     this.content = newContent
 
     return this.save()
   }
 
   @instanceMethod
-  async setDeclined(this: InstanceType<Post>) {
-    this.status = PostStatus.Declined
+  public async setRejected(
+    this: InstanceType<Post>,
+    reason: string
+  ): Promise<InstanceType<Post>> {
+    this.status = PostStatus.Rejected
+    this.reason = reason
     return this.save()
   }
 
   @instanceMethod
-  async setAccepted(this: InstanceType<Post>, fbLink: string) {
+  public async setAccepted(
+    this: InstanceType<Post>,
+    fbLink: string
+  ): Promise<InstanceType<Post>> {
     this.status = PostStatus.Accepted
     this.fbLink = fbLink
-    this.number = ((await PostModel.find().sort({ number: -1 }).limit(1).exec())[0].number || 0) + 1
+    this.number =
+      ((await PostModel.find()
+        .sort({ number: -1 })
+        .limit(1)
+        .exec())[0].number || 0) + 1
     return this.save()
   }
 
   @instanceMethod
-  getPublicFields(this: InstanceType<Post>) {
+  public getPublicFields(this: InstanceType<Post>): PostPublicFields {
     return {
       id: this.id,
       number: this.number,
@@ -84,17 +118,17 @@ class Post extends Typegoose {
   }
 
   @staticMethod
-  static async getList(
+  public static async getList(
     this: ModelType<Post> & typeof Post,
     count: number = 10,
     cursor: string = '',
     options: { admin: boolean } = { admin: false }
-  ) {
+  ): Promise<Array<InstanceType<Post>>> {
     // 관리자는 오래된 글부터, 일반 사용자는 최신 글부터
     const query = {
       // 다음 글의 _id: 관리자는 더 크고(커서보다 최신 글),
       _id: {
-        [options.admin ? '$gt' : '$lt']: cursor,
+        [options.admin ? '$gt' : '$lt']: cursor
       },
       // 일반 사용자는 더 작음(커서보다 오래된 글).
       // 관리자가 아니면 Accepted 글만 가져옴
@@ -105,7 +139,10 @@ class Post extends Typegoose {
       delete query._id
     }
 
-    const posts = await this.find(query).sort({ _id: options.admin ? 1 : -1 }).limit(count).exec()
+    const posts = await this.find(query)
+      .sort({ _id: options.admin ? 1 : -1 })
+      .limit(count)
+      .exec()
     return posts
   }
 }
