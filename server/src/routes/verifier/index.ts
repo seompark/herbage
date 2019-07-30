@@ -9,7 +9,7 @@ const router = new Router()
 router.get(
   '/',
   async (ctx): Promise<void> => {
-    const count = await Verifier.countDocuments({}).exec()
+    const count = await Verifier.estimatedDocumentCount({}).exec()
     const random = Math.floor(Math.random() * count)
     const result = await Verifier.findOne()
       .skip(random)

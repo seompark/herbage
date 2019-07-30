@@ -17,17 +17,22 @@ router.get(
   async (ctx): Promise<void> => {
     const data = ctx.validator.data as RequestQuery
 
-    const isAdmin = ctx.header.authorization === process.env.ADMIN_PASSWORD
-    if (ctx.header.authorization && !isAdmin)
+    if (ctx.header.authorization && !ctx.isAdmin) {
       throw new createError.Unauthorized()
+    }
 
     const posts = await Post.getList(data.count, data.cursor, {
-      admin: ctx.isAdmin
+      admin: ctx.isAdmin,
+      condition: ctx.isAdmin && {
+        status: PostStatus.Pending
+      }
     })
 
     ctx.status = 200
     ctx.body = {
-      posts: posts.map((v): PostPublicFields => v.getPublicFields()),
+      posts: ctx.isAdmin
+        ? posts.map((v): Record<keyof typeof v, unknown> => v.toObject())
+        : posts.map((v): PostPublicFields => v.getPublicFields()),
       cursor: posts.length > 0 ? posts[posts.length - 1].cursorId : null,
       hasNext: posts.length === data.count
     }

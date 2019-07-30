@@ -5,7 +5,7 @@ import Form from '../src/components/Form'
 import Card from '../src/components/Card'
 import ThemeContext from '../src/contexts/ThemeContext'
 import { getVerifier } from '../src/api/verifier'
-import { getPosts, createPost } from '../src/api/posts'
+import { createPost, getPosts } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 import axios from '../src/api/axios'
 
@@ -76,8 +76,13 @@ export default function Index({ postData, verifier }) {
       </h1>
       <Form onSubmit={handleSubmit} verifier={verifier} />
       {posts && posts.map(post => <Card post={post} key={post.id} />)}
-      {isFetching && <div className="info-text">로딩 중...</div>}
-      {!hasNext && <div className="info-text">마지막 글입니다.</div>}
+      {postData.error && (
+        <div className="info info--error">{postData.error}</div>
+      )}
+      {!postData.error && isFetching && <div className="info">로딩 중...</div>}
+      {!postData.error && !hasNext && (
+        <div className="info">마지막 글입니다.</div>
+      )}
       <style jsx>{`
         h1 {
           font-family: 'Spoqa Han Sans', sans-serif;
@@ -88,11 +93,15 @@ export default function Index({ postData, verifier }) {
           font-family: 'Spoqa Han Sans', sans-serif;
         }
 
-        .info-text {
+        .info {
           text-align: center;
           font-size: 14px;
           font-family: 'Spoqa Han Sans', sans-serif;
           color: #41adff;
+        }
+
+        .info.info--error {
+          color: #eb4034;
         }
       `}</style>
     </>
@@ -102,12 +111,14 @@ export default function Index({ postData, verifier }) {
 Index.getInitialProps = async ctx => {
   delete axios.defaults.headers['Authorization']
 
-  const postData = await getPosts(15)
-  const verifier = await getVerifier()
+  const fetchPosts = getPosts(15, undefined, { safe: true })
+  const fetchVerifier = getVerifier({ safe: true })
 
+  const postData = (await fetchPosts).data
+  const verifier = (await fetchVerifier).data
   return {
-    postData: postData.data,
-    verifier: verifier.data
+    postData,
+    verifier
   }
 }
 
@@ -115,10 +126,12 @@ Index.propTypes = {
   postData: PropTypes.exact({
     posts: PropTypes.array.isRequired,
     cursor: PropTypes.string.isRequired,
-    hasNext: PropTypes.bool
+    hasNext: PropTypes.bool.isRequired,
+    error: PropTypes.string
   }),
   verifier: PropTypes.exact({
     id: PropTypes.string.isRequired,
-    question: PropTypes.string.isRequired
+    question: PropTypes.string.isRequired,
+    error: PropTypes.string
   })
 }

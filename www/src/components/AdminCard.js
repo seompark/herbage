@@ -16,7 +16,6 @@ function AdminCard({ post }) {
       <button onClick={openRejectingModal}>거부</button>
       <button onClick={handleEdit}>수정</button>
       <button>삭제</button>
-      <button>복사</button>
     </div>
   )
 }

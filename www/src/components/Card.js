@@ -12,7 +12,7 @@ function Card({ post }) {
     <div className="card">
       <h3>
         <a href={post.fbLink} target="_blank">
-          {post.number}번째 제보
+          {post.number || '?'}번째 제보
         </a>
         <span className="check-fb">
           <FiArrowLeft style={{ verticalAlign: 'middle' }} /> 페이스북에서 확인
@@ -103,7 +103,7 @@ Card.propTypes = {
     title: PropTypes.string,
     content: PropTypes.string.isRequired,
     fbLink: PropTypes.string.isRequired,
-    date: PropTypes.number
+    createdAt: PropTypes.number
   })
 }
 

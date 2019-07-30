@@ -122,24 +122,34 @@ class Post extends Typegoose {
     this: ModelType<Post> & typeof Post,
     count: number = 10,
     cursor: string = '',
-    options: { admin: boolean } = { admin: false }
+    options: {
+      admin: boolean
+      condition?: Record<string, unknown>
+    } = { admin: false }
   ): Promise<Array<InstanceType<Post>>> {
     // 관리자는 오래된 글부터, 일반 사용자는 최신 글부터
-    const query = {
+    const condition = {
       // 다음 글의 _id: 관리자는 더 크고(커서보다 최신 글),
+      // 일반 사용자는 더 작음(커서보다 오래된 글).
       _id: {
         [options.admin ? '$gt' : '$lt']: cursor
       },
-      // 일반 사용자는 더 작음(커서보다 오래된 글).
-      // 관리자가 아니면 Accepted 글만 가져옴
-      status: !options.admin && PostStatus.Accepted
+      status: PostStatus.Accepted
     }
 
     if (!cursor) {
-      delete query._id
+      delete condition._id
     }
 
-    const posts = await this.find(query)
+    // 관리자는 모든 글을 가져옴
+    if (options.admin) {
+      delete condition.status
+    }
+
+    const posts = await this.find({
+      ...condition,
+      ...options.condition
+    })
       .sort({ _id: options.admin ? 1 : -1 })
       .limit(count)
       .exec()
@@ -148,7 +158,10 @@ class Post extends Typegoose {
 }
 
 const PostModel = new Post().getModelForClass(Post, {
-  schemaOptions: { timestamps: true }
+  schemaOptions: {
+    timestamps: true,
+    collection: 'posts'
+  }
 })
 
 export default PostModel

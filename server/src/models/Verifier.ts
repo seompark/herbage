@@ -21,4 +21,10 @@ class Verifier extends Typegoose {
   }
 }
 
-export default new Verifier().getModelForClass(Verifier)
+const VerifierModel = new Verifier().getModelForClass(Verifier, {
+  schemaOptions: {
+    collection: 'verifiers'
+  }
+})
+
+export default VerifierModel

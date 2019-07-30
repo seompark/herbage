@@ -14,8 +14,6 @@ export default function validatorMiddleware<T>(
     })
     const errors = await validate(data)
 
-    console.log(data, ctx.request[options.where])
-
     ctx.validator = {
       data,
       errors

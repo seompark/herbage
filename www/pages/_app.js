@@ -3,6 +3,7 @@ import App, { Container } from 'next/app'
 import Head from 'next/head'
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { ToastContainer } from 'react-toastify'
+import Cookie from 'universal-cookie'
 import 'react-toastify/dist/ReactToastify.css'
 import ThemeContext from '../src/contexts/ThemeContext'
 import axios from '../src/api/axios'
@@ -58,9 +59,7 @@ class CustomApp extends App {
         typeof Component.getInitialProps === 'function'
           ? await Component.getInitialProps(ctx)
           : {},
-      cookies:
-        !process.browser &&
-        new (require('universal-cookie'))(ctx.req.headers.cookie)
+      cookies: !process.browser && new Cookie(ctx.req.headers.cookie)
     }
   }
 

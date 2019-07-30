@@ -41,6 +41,11 @@ function Form({ onSubmit, verifier }) {
   const handleSubmit = async e => {
     e.preventDefault()
 
+    if (verifier.error) {
+      toast.error(verifier.error)
+      return
+    }
+
     if (content.length === 0) {
       toast.error('내용을 입력해주세요.')
       return
@@ -78,68 +83,83 @@ function Form({ onSubmit, verifier }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="title-input">제목 (선택)</label>
-      <input
-        id="title-input"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        onKeyPress={preventSubmitOnEnter}
-        style={{ width: '25%', minWidth: 250 }}
-        type="text"
-        placeholder="제목 (선택)"
-      />
-      <label htmlFor="cert-input">학생 인증</label>
-      <input
-        id="cert-input"
-        value={answer}
-        onChange={e => setAnswer(e.target.value)}
-        onKeyPress={preventSubmitOnEnter}
-        style={{ width: '40%', minWidth: 250 }}
-        type="text"
-        placeholder={verifier.question}
-        required
-      />
-      <label htmlFor="tag-select">태그 선택</label>
-      <select
-        id="tag-select"
-        value={tag}
-        onChange={e => setTag(e.target.value)}
-        options={tags}
-        required
-      >
-        <option value="" disabled hidden>
-          태그 선택
-        </option>
-        {tags.map((v, i) => (
-          <option value={v} key={i}>
-            {v}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="content-textarea">내용</label>
-      <TextArea
-        id="content-textarea"
-        value={content}
-        onUpdate={setContent}
-        placeholder="타인을 향한 욕설 및 비방은 징계 대상입니다. (최대 3000자)"
-        required
-      />
-      <button type="submit">
-        {!isLoading ? (
-          submitChecked ? (
-            '한번 더 클릭하세요'
-          ) : (
-            '제보하기'
-          )
-        ) : (
-          <FiLoader className={classNames('spin', spinAnimation.className)} />
-        )}
-      </button>
+      {verifier.error ? (
+        <div className="error">{verifier.error}</div>
+      ) : (
+        <>
+          <label htmlFor="title-input">제목 (선택)</label>
+          <input
+            id="title-input"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            onKeyPress={preventSubmitOnEnter}
+            style={{ width: '25%', minWidth: 250 }}
+            type="text"
+            placeholder="제목 (선택)"
+          />
+          <label htmlFor="cert-input">학생 인증</label>
+          <input
+            id="cert-input"
+            value={answer}
+            onChange={e => setAnswer(e.target.value)}
+            onKeyPress={preventSubmitOnEnter}
+            style={{ width: '40%', minWidth: 250 }}
+            type="text"
+            placeholder={verifier.question}
+            required
+          />
+          <label htmlFor="tag-select">태그 선택</label>
+          <select
+            id="tag-select"
+            value={tag}
+            onChange={e => setTag(e.target.value)}
+            options={tags}
+            required
+          >
+            <option value="" disabled hidden>
+              태그 선택
+            </option>
+            {tags.map((v, i) => (
+              <option value={v} key={i}>
+                {v}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="content-textarea">내용</label>
+          <TextArea
+            id="content-textarea"
+            value={content}
+            onUpdate={setContent}
+            placeholder="타인을 향한 욕설 및 비방은 징계 대상입니다. (최대 3000자)"
+            required
+          />
+          <button type="submit">
+            {!isLoading ? (
+              submitChecked ? (
+                '한번 더 클릭하세요'
+              ) : (
+                '제보하기'
+              )
+            ) : (
+              <FiLoader
+                className={classNames('spin', spinAnimation.className)}
+              />
+            )}
+          </button>
+        </>
+      )}
+
       {spinAnimation.styles}
       <style jsx>{`
         * {
           font-family: 'Spoqa Han Sans', sans-serif;
         }
+
+        .error {
+          text-align: center;
+          font-size: 14px;
+        }
+
         input {
           display: inline-block !important;
         }
@@ -162,7 +182,8 @@ Form.propTypes = {
   onSubmit: PropTypes.func,
   verifier: PropTypes.exact({
     id: PropTypes.string.isRequired,
-    question: PropTypes.string.isRequired
+    question: PropTypes.string.isRequired,
+    error: PropTypes.string
   })
 }
 

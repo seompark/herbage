@@ -6,6 +6,7 @@
     { "src": "server/src/routes/**/*.ts", "use": "@now/node" }
   ],
   "routes": [
+    { "src": "/a1p4ca/login", "dest": "/www/a1p4ca?type=login" },
     { "src": "/api/posts/(.*)", "dest": "/server/src/routes/posts" },
     { "src": "/api/verify/(.*)", "dest": "/server/src/routes/verify" },
     { "src": "/api/(.*)", "dest": "/server/src/routes/$1" },

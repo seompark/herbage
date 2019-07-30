@@ -1,5 +1,6 @@
 import { Context } from 'koa'
 import * as createError from 'http-errors'
+import * as jwt from 'jsonwebtoken'
 
 /**
  * if options.continue is true, even if client isn't an admin,
@@ -18,9 +19,16 @@ export default function authMiddleware(
         return
       } else throw new createError.Unauthorized()
     }
-    ctx.isAdmin =
-      Base64.decode(ctx.header.authorization.replace('Basic ', '')) ===
-      process.env.ADMIN_PASSWORD
+    try {
+      jwt.verify(
+        ctx.header.authorization.replace('Bearer ', ''),
+        process.env.JWT_SECRET || 'secret'
+      )
+      ctx.isAdmin = true
+    } catch (err) {
+      ctx.isAdmin = false
+    }
+
     if (!ctx.isAdmin && !options.continue) throw new createError.Unauthorized()
 
     await next()
