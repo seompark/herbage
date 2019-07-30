@@ -6,8 +6,8 @@ import * as Router from 'koa-router'
 import * as mongoose from 'mongoose'
 import { IncomingMessage, ServerResponse } from 'http'
 import { Http2ServerRequest, Http2ServerResponse } from 'http2'
-const conditional = require('koa-conditional-get') // eslint-disable-line
-const etag = require('koa-etag') // eslint-disable-line
+import conditional = require('koa-conditional-get')
+import etag = require('koa-etag')
 
 mongoose
   .connect(process.env.MONGO_HOST || '', {
