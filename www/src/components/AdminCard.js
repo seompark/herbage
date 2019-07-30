@@ -10,8 +10,17 @@ function AdminCard({ post }) {
 
   return (
     <div>
+      <Card
+        post={{
+          id: post.id,
+          number: post.number,
+          title: post.title,
+          content: post.content,
+          fbLink: post.fbLink,
+          createdAt: post.createdAt
+        }}
+      />
       {post.status && <StatusChip status={post.status} />}
-      <Card post={post} />
       <button onClick={openAcceptingModal}>승인</button>
       <button onClick={openRejectingModal}>거부</button>
       <button onClick={handleEdit}>수정</button>
@@ -21,8 +30,8 @@ function AdminCard({ post }) {
 }
 
 AdminCard.propTypes = {
-  post: PropTypes.exact({
-    _id: PropTypes.string,
+  post: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     number: PropTypes.number,
     title: PropTypes.string,

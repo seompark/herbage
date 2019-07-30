@@ -97,12 +97,12 @@ function Card({ post }) {
 }
 
 Card.propTypes = {
-  post: PropTypes.exact({
+  post: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    number: PropTypes.number.isRequired,
+    number: PropTypes.number,
     title: PropTypes.string,
     content: PropTypes.string.isRequired,
-    fbLink: PropTypes.string.isRequired,
+    fbLink: PropTypes.string,
     createdAt: PropTypes.number
   })
 }

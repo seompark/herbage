@@ -14,20 +14,21 @@ import axios from '../src/api/axios'
 
 function Login() {
   const [inputValue, setInputValue] = useState('')
-  const [cookies, setCookie] = useCookies(['token'])
+  const [isLoading, setIsLoading] = useState(false)
+  const setCookie = useCookies(['token'])[1]
 
-  useEffect(() => {
-    if (!inputValue) return
-    Router.push('/a1p4ca')
-  }, [cookies])
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (isLoading) return
 
-  async function handleLogin() {
+    setIsLoading(true)
     try {
       const fetchedToken = await generateToken(inputValue)
       setCookie('token', fetchedToken.data.token, {
         path: '/',
         expires: new Date(jwt.decode(fetchedToken.data.token).exp * 1000)
       })
+      Router.push('/a1p4ca')
     } catch (err) {
       if (!err.response) {
         toast.error('네트워크 문제')
@@ -39,28 +40,29 @@ function Login() {
           toast.error('비밀번호가 틀렸습니다.')
           break
         default:
-          toast.error('무언가 문제가 생겼습니다.')
+          toast.error('문제가 생겼습니다.')
           break
       }
-
       setInputValue('')
+      setIsLoading(false)
     }
   }
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <input
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
         type="password"
         placeholder="입력하세요"
       />
-      <button onClick={handleLogin}>인증</button>
-    </div>
+      <button type="submit">{isLoading ? '인증 중...' : '로그인'}</button>
+    </form>
   )
 }
 
 function Admin({ postData, userData }) {
+  const removeCookie = useCookies()[2]
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
@@ -82,20 +84,37 @@ function Admin({ postData, userData }) {
     setIsFetching(false)
   }, [posts])
 
+  const logout = () => {
+    removeCookie('token', {
+      path: '/'
+    })
+    Router.push('/')
+  }
+
   return (
     <div>
       <h1>Welcome, {userData.name}</h1>
-      {posts.map(v => (
-        <AdminCard post={v} />
+      <button onClick={logout}>로그아웃</button>
+      {posts.map((v, i) => (
+        <AdminCard post={v} key={`card-${i}`} />
       ))}
-      {!hasNext && <div className="info-text">마지막 글입니다.</div>}
-      {isFetching && <div className="info-text">로딩 중...</div>}
+      {postData.error && (
+        <div className="info info--error">{postData.error}</div>
+      )}
+      {!postData.error && !hasNext && (
+        <div className="info">마지막 글입니다.</div>
+      )}
+      {!postData.error && isFetching && <div className="info">로딩 중...</div>}
       <style jsx>{`
-        .info-text {
+        .info {
           text-align: center;
           font-size: 14px;
           font-family: 'Spoqa Han Sans', sans-serif;
           color: #41adff;
+        }
+
+        .info.info--error {
+          color: #eb4034;
         }
       `}</style>
       <AdminModal />
@@ -134,36 +153,66 @@ A1P4CA.getInitialProps = async ctx => {
     }
   }
 
+  // 토큰이 있는데 로그인 페이지에 접근
   if (token && ctx.query.type === 'login') {
     redirect('/a1p4ca')
+    return
+  }
+
+  // 정상적인 로그인 페이지 접근
+  if (ctx.query.type === 'login') {
     return {
       isLoginPage: true
     }
   }
 
+  // 토큰이 없는데 관리자 페이지 접근
   if (!token && !ctx.query.type) {
     redirect('/a1p4ca/login')
-    return {
-      isLoginPage: false
-    }
+    return
   }
 
   axios.defaults.headers['Authorization'] = `Bearer ${token}`
 
-  const userData = jwt.decode(token)
+  try {
+    const postData = await getPosts(5)
+    const userData = jwt.decode(token)
 
-  return {
-    userData,
-    postData: (await getPosts(20)).data,
-    isLoginPage: false
+    return {
+      userData,
+      postData: postData.data
+    }
+  } catch (err) {
+    if (!err.response) {
+      return {
+        postData: {
+          posts: [],
+          error: '네트워크에 문제가 있음'
+        }
+      }
+    }
+
+    switch (err.response.status) {
+      case 401:
+        toast.error('토큰이 만료됨!')
+        cookies.remove('token')
+        redirect('/a1p4ca/login')
+        break
+      default:
+        toast.error('잘못됨!')
+        cookies.remove('token')
+        redirect('/a1p4ca/login')
+        break
+    }
   }
 }
 
 A1P4CA.propTypes = {
-  postData: PropTypes.exact({
+  postData: PropTypes.shape({
     posts: PropTypes.array.isRequired,
     cursor: PropTypes.string,
-    hasNext: PropTypes.bool
+    hasNext: PropTypes.bool,
+    error: PropTypes.string
   }),
   userData: PropTypes.object,
   isLoginPage: PropTypes.bool

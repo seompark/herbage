@@ -1,11 +1,44 @@
 import PropTypes from 'prop-types'
+import { ACCEPTED, REJECTED, PENDING } from '../utils/post-status'
 
 function StatusChip({ status }) {
-  return <div>{status}</div>
+  const statusFactory = (text, bgColor, color) => ({
+    text,
+    bgColor,
+    color
+  })
+  const statusData = (() => {
+    switch (status) {
+      case ACCEPTED:
+        return statusFactory('승인', 'green', '#fff')
+      case REJECTED:
+        return statusFactory('거부', 'red', '#fff')
+      case PENDING:
+        return statusFactory('대기', 'blue', '#fff')
+    }
+  })()
+
+  return (
+    <div className="status">
+      {statusData.text}
+      <style jsx>{`
+        .status {
+          font-family: 'Spoqa Han Sans', sans-serif;
+          font-size: 18px;
+          display: inline-block;
+          color: ${statusData.color};
+          background-color: ${statusData.bgColor};
+          margin-right: 0.5rem;
+          padding: 0.25rem 1rem;
+          border-radius: 20px;
+        }
+      `}</style>
+    </div>
+  )
 }
 
 StatusChip.propTypes = {
-  status: PropTypes.string.required
+  status: PropTypes.string.isRequired
 }
 
 export default StatusChip

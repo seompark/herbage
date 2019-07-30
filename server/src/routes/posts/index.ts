@@ -31,7 +31,7 @@ router.get(
     ctx.status = 200
     ctx.body = {
       posts: ctx.isAdmin
-        ? posts.map((v): Record<keyof typeof v, unknown> => v.toObject())
+        ? posts.map((v): Record<keyof typeof v, unknown> => v.toJSON())
         : posts.map((v): PostPublicFields => v.getPublicFields()),
       cursor: posts.length > 0 ? posts[posts.length - 1].cursorId : null,
       hasNext: posts.length === data.count
