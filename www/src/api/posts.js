@@ -62,3 +62,11 @@ export async function modifyPost(post) {
     return {}
   }
 }
+
+export async function getNewNumber() {
+  try {
+    return (await axios.get('/api/posts/new-number')).data.newNumber
+  } catch (err) {
+    return -1
+  }
+}

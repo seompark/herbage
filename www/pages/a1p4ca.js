@@ -64,8 +64,7 @@ function Login() {
 }
 
 function Admin({ postData, userData }) {
-  const removeCookie = useCookies()[2]
-  const cookie = useCookies()[0]
+  const [cookies, setCookie, removeCookie] = useCookies(['token'])
 
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
@@ -116,9 +115,6 @@ function Admin({ postData, userData }) {
     }
 
     switch (err.response.status) {
-      case 451:
-        toast.error('인증에 실패했습니다.')
-        break
       case 400:
         toast.error('잘못된 값을 보냈습니다.')
         break
@@ -165,14 +161,13 @@ function Admin({ postData, userData }) {
   }
 
   useEffect(() => {
-    if (!isFetching) return
     setIsFetching(false)
   }, [posts])
 
   useEffect(() => {
-    const token = cookie.token
+    const token = cookies.token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  }, [isFetching])
+  })
 
   return (
     <div>

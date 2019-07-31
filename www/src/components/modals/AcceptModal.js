@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
 import AdminModal from './AdminModal'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import { getNewNumber } from '../../api/posts'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -26,6 +27,7 @@ const spinAnimation = css.resolve`
 function AcceptModal({ post, modalHandler, onSubmit }) {
   const [fbLink, setFbLink] = useState('')
   const [isLoading, setLoading] = useState(false)
+  const [newNumber, setNewNumber] = useState(0)
 
   const reset = () => setFbLink('')
   const id = post ? post.id : -1
@@ -47,6 +49,13 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
     )
     setLoading(false)
   }
+  const numberTask = async () => {
+    const number = await getNewNumber()
+    setNewNumber(number)
+  }
+  useEffect(() => {
+    if (post) numberTask()
+  }, [post])
   return (
     <AdminModal modalName="accept" post={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
@@ -63,11 +72,13 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
         {post ? (
           <CopyToClipboard
             text={
+              `#${newNumber}번째제보\n\n` +
               (post.title
                 ? post.title.length !== 0
                   ? `제목: ${post.title}\n\n`
                   : ''
-                : '') + post.content
+                : '') +
+              post.content
             }
             onCopy={() => toast.success('클립보드에 복사되었습니다.')}
           >

@@ -38,7 +38,7 @@ export default function Index({ postData, verifier }) {
   }, [posts])
   useEffect(() => {
     axios.defaults.headers.common['Authorization'] = ``
-  }, [isFetching])
+  })
 
   const handleSubmit = async (data, reset) => {
     try {

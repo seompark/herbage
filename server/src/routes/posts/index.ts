@@ -98,4 +98,16 @@ router.patch(
   }
 )
 
+router.get(
+  '/new-number',
+  async (ctx): Promise<void> => {
+    const newNumber = ((await Post.find()
+        .sort({ number: -1 })
+        .limit(1)
+        .exec())[0].number || 0) + 1
+    ctx.status = 200
+    ctx.body = { newNumber }
+  }
+)
+
 export default createApp('/posts', router)
