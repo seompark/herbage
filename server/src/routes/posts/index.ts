@@ -72,21 +72,25 @@ router.patch(
     const body = ctx.validator.data as EditPost
 
     if (body.status) {
-      const post = await Post.findOne({ id: ctx.params.id }).exec()
+      const post = await Post.findById(ctx.params.id)
       if (!post) throw new createError.NotFound()
+
+      let result
 
       switch (body.status) {
         case PostStatus.Accepted:
           if (!body.fbLink) throw new createError.BadRequest()
-          await post.setAccepted(body.fbLink)
+          result = await post.setAccepted(body.fbLink)
           break
         case PostStatus.Rejected:
           if (!body.reason) throw new createError.BadRequest()
-          await post.setRejected(body.reason)
+          result = await post.setRejected(body.reason)
           break
         default:
           throw new createError.BadRequest()
       }
+      ctx.status = 200
+      ctx.body = result
     } else {
       const result = await Post.updateOne({ _id: ctx.params.id }, body, {
         runValidators: true,
@@ -95,6 +99,7 @@ router.patch(
         }
       }).exec()
 
+      ctx.status = 200
       ctx.body = result.getPublicFields()
     }
   }

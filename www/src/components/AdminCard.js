@@ -3,9 +3,9 @@ import Card from './Card'
 import StatusChip from './StatusChip'
 // import { REJECTED, ACCEPTED } from '../utils/post-status'
 
-function AdminCard({ post }) {
-  const openAcceptingModal = () => null
-  const openRejectingModal = () => null
+function AdminCard({ post, modalHandler }) {
+  const openAcceptingModal = () => modalHandler('accept', post)
+  const openRejectingModal = () => modalHandler('reject', post)
   const handleEdit = () => null
 
   return (
@@ -41,7 +41,8 @@ AdminCard.propTypes = {
     status: PropTypes.string.isRequired,
     reason: PropTypes.string,
     history: PropTypes.array.isRequired
-  })
+  }),
+  modalHandler: PropTypes.func
 }
 
 export default AdminCard

@@ -32,3 +32,25 @@ export async function createPost({ title, content, answer, verifier, tag }) {
     }
   })
 }
+
+export async function acceptPost({ id, fbLink }) {
+  try {
+    return (await axios.patch(`/api/posts/${id}`, {
+      status: 'ACCEPTED',
+      fbLink
+    })).data
+  } catch (err) {
+    return {}
+  }
+}
+
+export async function rejectPost({ id, reason }) {
+  try {
+    return (await axios.patch(`/api/posts/${id}`, {
+      status: 'REJECTED',
+      reason
+    })).data
+  } catch (err) {
+    return {}
+  }
+}
