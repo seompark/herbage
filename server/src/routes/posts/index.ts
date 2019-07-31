@@ -71,12 +71,12 @@ router.patch(
   async (ctx): Promise<void> => {
     const body = ctx.validator.data as EditPost
 
+    let result
+
+    const post = await Post.findById(ctx.params.id)
+    if (!post) throw new createError.NotFound()
+
     if (body.status) {
-      const post = await Post.findById(ctx.params.id)
-      if (!post) throw new createError.NotFound()
-
-      let result
-
       switch (body.status) {
         case PostStatus.Accepted:
           if (!body.fbLink) throw new createError.BadRequest()
@@ -89,19 +89,12 @@ router.patch(
         default:
           throw new createError.BadRequest()
       }
-      ctx.status = 200
-      ctx.body = result
     } else {
-      const result = await Post.updateOne({ _id: ctx.params.id }, body, {
-        runValidators: true,
-        sort: {
-          _id: 1
-        }
-      }).exec()
-
-      ctx.status = 200
-      ctx.body = result.getPublicFields()
+      if (!body.content) throw new createError.BadRequest()
+      result = await post.edit(body.content)
     }
+    ctx.status = 200
+    ctx.body = result.toJSON()
   }
 )
 

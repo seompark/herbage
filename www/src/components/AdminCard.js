@@ -6,7 +6,7 @@ import StatusChip from './StatusChip'
 function AdminCard({ post, modalHandler }) {
   const openAcceptingModal = () => modalHandler('accept', post)
   const openRejectingModal = () => modalHandler('reject', post)
-  const handleEdit = () => null
+  const openModifyingModal = () => modalHandler('modify', post)
 
   return (
     <div>
@@ -23,7 +23,7 @@ function AdminCard({ post, modalHandler }) {
       {post.status && <StatusChip status={post.status} />}
       <button onClick={openAcceptingModal}>승인</button>
       <button onClick={openRejectingModal}>거부</button>
-      <button onClick={handleEdit}>수정</button>
+      <button onClick={openModifyingModal}>수정</button>
       <button>삭제</button>
     </div>
   )

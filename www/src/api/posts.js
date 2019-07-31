@@ -54,3 +54,11 @@ export async function rejectPost({ id, reason }) {
     return {}
   }
 }
+
+export async function modifyPost(post) {
+  try {
+    return (await axios.patch(`/api/posts/${post.id}`, post)).data
+  } catch (err) {
+    return {}
+  }
+}

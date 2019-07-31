@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
 import AdminModal from './AdminModal'
+import CopyToClipboard from 'react-copy-to-clipboard'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -22,16 +23,16 @@ const spinAnimation = css.resolve`
   }
 `
 
-function RejectModal({ post, modalHandler, onSubmit }) {
-  const [reason, setReason] = useState('')
+function AcceptModal({ post, modalHandler, onSubmit }) {
+  const [fbLink, setFbLink] = useState('')
   const [isLoading, setLoading] = useState(false)
 
-  const reset = () => setReason('')
+  const reset = () => setFbLink('')
   const id = post ? post.id : -1
   const handleSubmit = async e => {
     e.preventDefault()
 
-    if (reason.length === 0) {
+    if (fbLink.length === 0) {
       toast.error('내용을 입력해주세요.')
       return
     }
@@ -40,28 +41,44 @@ function RejectModal({ post, modalHandler, onSubmit }) {
     await onSubmit(
       {
         id,
-        reason
+        fbLink
       },
       reset
     )
     setLoading(false)
   }
   return (
-    <AdminModal modalName="reject" post={post} modalHandler={modalHandler}>
+    <AdminModal modalName="accept" post={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="reason">사유</label>
+        <label htmlFor="link-input">페이스북 링크</label>
         <input
-          id="reason"
-          value={reason}
-          onChange={e => setReason(e.target.value)}
+          id="link-input"
+          value={fbLink}
+          onChange={e => setFbLink(e.target.value)}
           style={{ width: '80%', minWidth: 250 }}
           type="text"
-          placeholder="거부 사유를 입력하세요"
+          placeholder="페이스북 링크를 입력하세요"
           required
         />
+        {post ? (
+          <CopyToClipboard
+            text={
+              (post.title
+                ? post.title.length !== 0
+                  ? `제목: ${post.title}\n\n`
+                  : ''
+                : '') + post.content
+            }
+            onCopy={() => toast.success('클립보드에 복사되었습니다.')}
+          >
+            <button type="button">복사</button>
+          </CopyToClipboard>
+        ) : (
+          <div />
+        )}
         <button type="submit">
           {!isLoading ? (
-            '거부'
+            '승인'
           ) : (
             <FiLoader className={classNames('spin', spinAnimation.className)} />
           )}
@@ -95,7 +112,7 @@ function RejectModal({ post, modalHandler, onSubmit }) {
   )
 }
 
-RejectModal.propTypes = {
+AcceptModal.propTypes = {
   post: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
@@ -112,4 +129,4 @@ RejectModal.propTypes = {
   onSubmit: PropTypes.func
 }
 
-export default RejectModal
+export default AcceptModal

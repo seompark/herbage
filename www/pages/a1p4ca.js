@@ -6,11 +6,12 @@ import { useCookies } from 'react-cookie'
 import jwt from 'jsonwebtoken'
 import { toast } from 'react-toastify'
 import AdminCard from '../src/components/AdminCard'
-import AcceptModal from '../src/components/AcceptModal'
-import RejectModal from '../src/components/RejectModal'
+import AcceptModal from '../src/components/modals/AcceptModal'
+import RejectModal from '../src/components/modals/RejectModal'
+import ModifyModal from '../src/components/modals/ModifyModal'
 import { generateToken } from '../src/api/admin-token'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
-import { getPosts, acceptPost, rejectPost } from '../src/api/posts'
+import { getPosts, acceptPost, rejectPost, modifyPost } from '../src/api/posts'
 import axios from '../src/api/axios'
 
 function Login() {
@@ -64,8 +65,7 @@ function Login() {
 
 function Admin({ postData, userData }) {
   const removeCookie = useCookies()[2]
-  const token = useCookies()[0].token
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  const cookie = useCookies()[0]
 
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
@@ -84,7 +84,8 @@ function Admin({ postData, userData }) {
   )
   const [modal, setModal] = useState({
     accept: null,
-    reject: null
+    reject: null,
+    modify: null
   })
   const handleModal = (modalName, post = null) => {
     const newState = {
@@ -93,11 +94,6 @@ function Admin({ postData, userData }) {
     newState[modalName] = post
     setModal(newState)
   }
-
-  useEffect(() => {
-    if (!isFetching) return
-    setIsFetching(false)
-  }, [posts])
 
   const logout = () => {
     removeCookie('token', {
@@ -156,6 +152,28 @@ function Admin({ postData, userData }) {
     }
   }
 
+  const handleModify = async (data, reset) => {
+    try {
+      const newData = await modifyPost(data)
+      updatePosts(data.id, newData)
+      reset()
+      handleModal('modify')
+      toast.success('성공적으로 수정되었습니다.')
+    } catch (err) {
+      handleError(err)
+    }
+  }
+
+  useEffect(() => {
+    if (!isFetching) return
+    setIsFetching(false)
+  }, [posts])
+
+  useEffect(() => {
+    const token = cookie.token
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }, [isFetching])
+
   return (
     <div>
       <h1>Welcome, {userData.name}</h1>
@@ -191,6 +209,11 @@ function Admin({ postData, userData }) {
         post={modal.reject}
         modalHandler={handleModal}
         onSubmit={handleReject}
+      />
+      <ModifyModal
+        post={modal.modify}
+        modalHandler={handleModal}
+        onSubmit={handleModify}
       />
     </div>
   )

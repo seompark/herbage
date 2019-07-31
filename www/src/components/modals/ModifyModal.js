@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
 import AdminModal from './AdminModal'
+import TextArea from '../TextArea'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -22,46 +23,50 @@ const spinAnimation = css.resolve`
   }
 `
 
-function AcceptModal({ post, modalHandler, onSubmit }) {
-  const [fbLink, setFbLink] = useState('')
+function ModifyModal({ post, modalHandler, onSubmit }) {
+  const [content, setContent] = useState('')
   const [isLoading, setLoading] = useState(false)
+  const [isModifying, setModifying] = useState(false)
 
-  const reset = () => setFbLink('')
+  const reset = () => {
+    setContent('')
+    setModifying(false)
+  }
+
   const id = post ? post.id : -1
   const handleSubmit = async e => {
     e.preventDefault()
 
-    if (fbLink.length === 0) {
+    if (content.length === 0) {
       toast.error('내용을 입력해주세요.')
       return
     }
 
     setLoading(true)
-    await onSubmit(
-      {
-        id,
-        fbLink
-      },
-      reset
-    )
+    await onSubmit({ id, content }, reset)
     setLoading(false)
   }
+  const handleClose = name => {
+    reset()
+    modalHandler(name)
+  }
   return (
-    <AdminModal modalName="accept" post={post} modalHandler={modalHandler}>
+    <AdminModal modalName="modify" post={post} modalHandler={handleClose}>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="fb-link">페이스북 링크</label>
-        <input
-          id="fb-link"
-          value={fbLink}
-          onChange={e => setFbLink(e.target.value)}
-          style={{ width: '80%', minWidth: 250 }}
-          type="text"
-          placeholder="페이스북 링크를 입력하세요"
+        <label htmlFor="content-textarea">내용</label>
+        <TextArea
+          id="content-textarea"
+          value={isModifying ? content : post ? post.content : ''}
+          onUpdate={c => {
+            setContent(c)
+            if (!isModifying) setModifying(true)
+          }}
+          placeholder="내용을 입력하세요"
           required
         />
         <button type="submit">
           {!isLoading ? (
-            '승인'
+            '수정'
           ) : (
             <FiLoader className={classNames('spin', spinAnimation.className)} />
           )}
@@ -95,7 +100,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
   )
 }
 
-AcceptModal.propTypes = {
+ModifyModal.propTypes = {
   post: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
@@ -112,4 +117,4 @@ AcceptModal.propTypes = {
   onSubmit: PropTypes.func
 }
 
-export default AcceptModal
+export default ModifyModal
