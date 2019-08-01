@@ -68,8 +68,7 @@ function Admin({ postData, userData }) {
 
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
-  const [hasNext, setHasNext] = useState(postData.hasNext)
-  const [isFetching, setIsFetching] = useInfiniteScroll(
+  const scrollHook = useInfiniteScroll(
     async () => {
       const fetchedPosts = await getPosts(20, cursor)
       setCursor(fetchedPosts.data.cursor)
@@ -78,9 +77,12 @@ function Admin({ postData, userData }) {
     },
     {
       threshold: 500,
-      hasNext
+      next: postData.hasNext
     }
   )
+  const [hasNext, setHasNext] = scrollHook[0]
+  const [isFetching, setIsFetching] = scrollHook[1]
+
   const [modal, setModal] = useState({
     accept: null,
     reject: null,
@@ -95,6 +97,7 @@ function Admin({ postData, userData }) {
   }
 
   const logout = () => {
+    delete axios.defaults.headers.common['Authorization']
     removeCookie('token', {
       path: '/'
     })
@@ -163,7 +166,6 @@ function Admin({ postData, userData }) {
   useEffect(() => {
     setIsFetching(false)
   }, [posts])
-
   useEffect(() => {
     const token = cookies.token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
