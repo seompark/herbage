@@ -6,10 +6,12 @@ import { useCookies } from 'react-cookie'
 import jwt from 'jsonwebtoken'
 import { toast } from 'react-toastify'
 import AdminCard from '../src/components/AdminCard'
-import AdminModal from '../src/components/AdminModal'
+import AcceptModal from '../src/components/modals/AcceptModal'
+import RejectModal from '../src/components/modals/RejectModal'
+import ModifyModal from '../src/components/modals/ModifyModal'
 import { generateToken } from '../src/api/admin-token'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
-import { getPosts } from '../src/api/posts'
+import { getPosts, acceptPost, rejectPost, modifyPost } from '../src/api/posts'
 import axios from '../src/api/axios'
 
 function Login() {
@@ -62,7 +64,8 @@ function Login() {
 }
 
 function Admin({ postData, userData }) {
-  const removeCookie = useCookies()[2]
+  const [cookies, setCookie, removeCookie] = useCookies(['token'])
+
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
@@ -79,24 +82,100 @@ function Admin({ postData, userData }) {
     }
   )
 
-  useEffect(() => {
-    if (!isFetching) return
-    setIsFetching(false)
-  }, [posts])
+  const [modal, setModal] = useState({
+    accept: null,
+    reject: null,
+    modify: null
+  })
+  const handleModal = (modalName, post = null) => {
+    const newState = {
+      ...modal
+    }
+    newState[modalName] = post
+    setModal(newState)
+  }
 
   const logout = () => {
+    delete axios.defaults.headers.common['Authorization']
     removeCookie('token', {
       path: '/'
     })
     Router.push('/')
   }
 
+  const updatePosts = (id, data) => {
+    const updatedPosts = posts.map(post => {
+      return post.id === id ? data : post
+    })
+    setPosts(updatedPosts)
+  }
+
+  const handleError = err => {
+    if (!err.response) {
+      toast.error('네트워크에 문제가 있습니다.')
+      return
+    }
+
+    switch (err.response.status) {
+      case 400:
+        toast.error('잘못된 값을 보냈습니다.')
+        break
+      default:
+        toast.error('서버에 문제가 생겼습니다.')
+        break
+    }
+  }
+
+  const handleAccept = async (data, reset) => {
+    try {
+      const newData = await acceptPost(data)
+      updatePosts(data.id, newData)
+      reset()
+      handleModal('accept')
+      toast.success('성공적으로 승인되었습니다.')
+    } catch (err) {
+      handleError(err)
+    }
+  }
+
+  const handleReject = async (data, reset) => {
+    try {
+      const newData = await rejectPost(data)
+      updatePosts(data.id, newData)
+      reset()
+      handleModal('reject')
+      toast.success('성공적으로 거부되었습니다.')
+    } catch (err) {
+      handleError(err)
+    }
+  }
+
+  const handleModify = async (data, reset) => {
+    try {
+      const newData = await modifyPost(data)
+      updatePosts(data.id, newData)
+      reset()
+      handleModal('modify')
+      toast.success('성공적으로 수정되었습니다.')
+    } catch (err) {
+      handleError(err)
+    }
+  }
+
+  useEffect(() => {
+    setIsFetching(false)
+  }, [posts])
+  useEffect(() => {
+    const token = cookies.token
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }, [])
+
   return (
     <div>
       <h1>Welcome, {userData.name}</h1>
       <button onClick={logout}>로그아웃</button>
       {posts.map((v, i) => (
-        <AdminCard post={v} key={`card-${i}`} />
+        <AdminCard post={v} key={`card-${i}`} modalHandler={handleModal} />
       ))}
       {postData.error && (
         <div className="info info--error">{postData.error}</div>
@@ -117,7 +196,21 @@ function Admin({ postData, userData }) {
           color: #eb4034;
         }
       `}</style>
-      <AdminModal />
+      <AcceptModal
+        post={modal.accept}
+        modalHandler={handleModal}
+        onSubmit={handleAccept}
+      />
+      <RejectModal
+        post={modal.reject}
+        modalHandler={handleModal}
+        onSubmit={handleReject}
+      />
+      <ModifyModal
+        post={modal.modify}
+        modalHandler={handleModal}
+        onSubmit={handleModify}
+      />
     </div>
   )
 }
@@ -172,7 +265,7 @@ A1P4CA.getInitialProps = async ctx => {
     return
   }
 
-  axios.defaults.headers['Authorization'] = `Bearer ${token}`
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
   try {
     const postData = await getPosts(5)

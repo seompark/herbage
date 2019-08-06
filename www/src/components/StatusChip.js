@@ -10,11 +10,11 @@ function StatusChip({ status }) {
   const statusData = (() => {
     switch (status) {
       case ACCEPTED:
-        return statusFactory('승인', 'green', '#fff')
+        return statusFactory('승인', '#4CAF50', '#fff')
       case REJECTED:
-        return statusFactory('거부', 'red', '#fff')
+        return statusFactory('거부', '#F44336', '#fff')
       case PENDING:
-        return statusFactory('대기', 'blue', '#fff')
+        return statusFactory('대기', '#FFAB40', '#fff')
     }
   })()
 

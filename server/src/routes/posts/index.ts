@@ -71,32 +71,42 @@ router.patch(
   async (ctx): Promise<void> => {
     const body = ctx.validator.data as EditPost
 
-    if (body.status) {
-      const post = await Post.findOne({ id: ctx.params.id }).exec()
-      if (!post) throw new createError.NotFound()
+    let result
 
+    const post = await Post.findById(ctx.params.id)
+    if (!post) throw new createError.NotFound()
+
+    if (body.status) {
       switch (body.status) {
         case PostStatus.Accepted:
           if (!body.fbLink) throw new createError.BadRequest()
-          await post.setAccepted(body.fbLink)
+          result = await post.setAccepted(body.fbLink)
           break
         case PostStatus.Rejected:
           if (!body.reason) throw new createError.BadRequest()
-          await post.setRejected(body.reason)
+          result = await post.setRejected(body.reason)
           break
         default:
           throw new createError.BadRequest()
       }
     } else {
-      const result = await Post.updateOne({ _id: ctx.params.id }, body, {
-        runValidators: true,
-        sort: {
-          _id: 1
-        }
-      }).exec()
-
-      ctx.body = result.getPublicFields()
+      if (!body.content) throw new createError.BadRequest()
+      result = await post.edit(body.content)
     }
+    ctx.status = 200
+    ctx.body = result.toJSON()
+  }
+)
+
+router.get(
+  '/new-number',
+  async (ctx): Promise<void> => {
+    const newNumber = ((await Post.find()
+        .sort({ number: -1 })
+        .limit(1)
+        .exec())[0].number || 0) + 1
+    ctx.status = 200
+    ctx.body = { newNumber }
   }
 )
 

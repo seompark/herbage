@@ -12,8 +12,8 @@ import axios from '../src/api/axios'
 export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
   const [cursor, setCursor] = useState(postData.cursor)
-  const [hasNext, setHasNext] = useState(postData.hasNext)
   const [theme, setTheme] = useContext(ThemeContext)
+  const [hasNext, setHasNext] = useState(postData.hasNext)
   const [isFetching, setIsFetching] = useInfiniteScroll(
     async () => {
       try {
@@ -36,6 +36,9 @@ export default function Index({ postData, verifier }) {
     if (!isFetching) return
     setIsFetching(false)
   }, [posts])
+  useEffect(() => {
+    delete axios.defaults.headers.common['Authorization']
+  }, [])
 
   const handleSubmit = async (data, reset) => {
     try {
@@ -109,7 +112,7 @@ export default function Index({ postData, verifier }) {
 }
 
 Index.getInitialProps = async ctx => {
-  delete axios.defaults.headers['Authorization']
+  delete axios.defaults.headers.common['Authorization']
 
   const fetchPosts = getPosts(15, undefined, { safe: true })
   const fetchVerifier = getVerifier({ safe: true })

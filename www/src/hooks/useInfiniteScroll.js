@@ -4,9 +4,10 @@ const useInfiniteScroll = (callback, { threshold = 500, hasNext }) => {
   const [isFetching, setIsFetching] = useState(false)
 
   useEffect(() => {
+    if (!hasNext) return
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [hasNext])
 
   useEffect(() => {
     if (!isFetching) return

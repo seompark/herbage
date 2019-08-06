@@ -3,10 +3,10 @@ import Card from './Card'
 import StatusChip from './StatusChip'
 // import { REJECTED, ACCEPTED } from '../utils/post-status'
 
-function AdminCard({ post }) {
-  const openAcceptingModal = () => null
-  const openRejectingModal = () => null
-  const handleEdit = () => null
+function AdminCard({ post, modalHandler }) {
+  const openAcceptingModal = () => modalHandler('accept', post)
+  const openRejectingModal = () => modalHandler('reject', post)
+  const openModifyingModal = () => modalHandler('modify', post)
 
   return (
     <div>
@@ -23,7 +23,7 @@ function AdminCard({ post }) {
       {post.status && <StatusChip status={post.status} />}
       <button onClick={openAcceptingModal}>승인</button>
       <button onClick={openRejectingModal}>거부</button>
-      <button onClick={handleEdit}>수정</button>
+      <button onClick={openModifyingModal}>수정</button>
       <button>삭제</button>
     </div>
   )
@@ -41,7 +41,8 @@ AdminCard.propTypes = {
     status: PropTypes.string.isRequired,
     reason: PropTypes.string,
     history: PropTypes.array.isRequired
-  })
+  }),
+  modalHandler: PropTypes.func
 }
 
 export default AdminCard
