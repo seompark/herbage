@@ -68,7 +68,8 @@ function Admin({ postData, userData }) {
 
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
-  const scrollHook = useInfiniteScroll(
+  const [hasNext, setHasNext] = useState(postData.hasNext)
+  const [isFetching, setIsFetching] = useInfiniteScroll(
     async () => {
       const fetchedPosts = await getPosts(20, cursor)
       setCursor(fetchedPosts.data.cursor)
@@ -77,11 +78,9 @@ function Admin({ postData, userData }) {
     },
     {
       threshold: 500,
-      next: postData.hasNext
+      hasNext
     }
   )
-  const [hasNext, setHasNext] = scrollHook[0]
-  const [isFetching, setIsFetching] = scrollHook[1]
 
   const [modal, setModal] = useState({
     accept: null,
