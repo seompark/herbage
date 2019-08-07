@@ -63,6 +63,14 @@ export async function modifyPost(post) {
   }
 }
 
+export async function deletePost(id) {
+  try {
+    await axios.delete(`/api/posts/${id}`)
+  } catch (err) {
+    return {}
+  }
+}
+
 export async function getNewNumber() {
   try {
     return (await axios.get('/api/posts/new-number')).data.newNumber
