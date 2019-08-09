@@ -211,11 +211,16 @@ function Admin({ postData, userData }) {
 
   return (
     <div>
-      <h1>Welcome, {userData.name}</h1>
-      <button onClick={logout}>로그아웃</button>
+      <h1>
+        Welcome, {userData.name}
+        <button style={{ fontSize: 16, float: 'right' }} onClick={logout}>
+          로그아웃
+        </button>
+      </h1>
       <span className="icon-filter" onClick={() => handleModal('filter', {})}>
         <MdFilterList />
       </span>
+      <br />
       {posts.map((v, i) => (
         <AdminCard
           post={v}
@@ -232,6 +237,11 @@ function Admin({ postData, userData }) {
       )}
       {!postData.error && isFetching && <div className="info">로딩 중...</div>}
       <style jsx>{`
+        h1,
+        button {
+          font-family: 'Spoqa Han Sans', sans-serif;
+        }
+
         .info {
           text-align: center;
           font-size: 14px;
