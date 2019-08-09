@@ -52,7 +52,8 @@ function AdminModal({ post, modalName, modalHandler, children }) {
         .icon-close {
           cursor: pointer;
           float: right;
-          opacity: 0.3;
+          opacity: 0.7;
+          font-size: x-large;
         }
       `}</style>
     </div>
