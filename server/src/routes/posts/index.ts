@@ -98,6 +98,19 @@ router.patch(
   }
 )
 
+router.delete(
+  '/:id',
+  authMiddleware({ continue: false }),
+  async (ctx): Promise<void> => {
+    const post = await Post.findById(ctx.params.id)
+    if (!post) throw new createError.NotFound()
+
+    await post.remove()
+
+    ctx.status = 200
+  }
+)
+
 router.get(
   '/new-number',
   async (ctx): Promise<void> => {
