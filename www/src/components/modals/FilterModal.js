@@ -1,20 +1,15 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 import AdminModal from './AdminModal'
 
-function FilterModal({ post, modalHandler, onSubmit }) {
-  const [pending, setPending] = useState(true)
-  const [accepted, setAccepted] = useState(false)
-  const [rejected, setRejected] = useState(false)
+function FilterModal({ post, modalHandler, states, filter }) {
+  const [pending, setPending] = states[0]
+  const [accepted, setAccepted] = states[1]
+  const [rejected, setRejected] = states[2]
 
   const handleSubmit = async e => {
     e.preventDefault()
-
-    const filter = [pending, accepted, rejected]
-
-    onSubmit({
-      filter
-    })
+    modalHandler('filter')
+    filter()
   }
   return (
     <AdminModal modalName="filter" post={post} modalHandler={modalHandler}>
@@ -25,7 +20,7 @@ function FilterModal({ post, modalHandler, onSubmit }) {
           type="checkbox"
           name="filter"
           checked={pending}
-          onChange={e => setPending(e.value)}
+          onChange={e => setPending(e.target.checked)}
         />
         <label htmlFor="accepted-checkbox">승인</label>
         <input
@@ -33,7 +28,7 @@ function FilterModal({ post, modalHandler, onSubmit }) {
           type="checkbox"
           name="filter"
           checked={accepted}
-          onChange={e => setAccepted(e.value)}
+          onChange={e => setAccepted(e.target.checked)}
         />
         <label htmlFor="rejected-checkbox">거부</label>
         <input
@@ -41,7 +36,7 @@ function FilterModal({ post, modalHandler, onSubmit }) {
           type="checkbox"
           name="filter"
           checked={rejected}
-          onChange={e => setRejected(e.value)}
+          onChange={e => setRejected(e.target.checked)}
         />
         <br />
         <button type="submit">필터</button>
@@ -72,7 +67,8 @@ function FilterModal({ post, modalHandler, onSubmit }) {
 FilterModal.propTypes = {
   post: PropTypes.object,
   modalHandler: PropTypes.func,
-  onSubmit: PropTypes.func
+  states: PropTypes.array,
+  filter: PropTypes.func
 }
 
 export default FilterModal

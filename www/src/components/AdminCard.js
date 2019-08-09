@@ -19,6 +19,7 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
       return
     }
     deleteHandler(post)
+    setDeleteChecked(false)
   }
 
   return (

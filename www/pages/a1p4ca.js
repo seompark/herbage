@@ -9,6 +9,7 @@ import AdminCard from '../src/components/AdminCard'
 import AcceptModal from '../src/components/modals/AcceptModal'
 import RejectModal from '../src/components/modals/RejectModal'
 import ModifyModal from '../src/components/modals/ModifyModal'
+import FilterModal from '../src/components/modals/FilterModal'
 import { generateToken } from '../src/api/admin-token'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 import {
@@ -19,6 +20,7 @@ import {
   deletePost
 } from '../src/api/posts'
 import axios from '../src/api/axios'
+import { MdFilterList } from 'react-icons/md'
 
 function Login() {
   const [inputValue, setInputValue] = useState('')
@@ -73,7 +75,8 @@ function Admin({ postData, userData }) {
   // eslint-disable-next-line
   const [cookies, setCookie, removeCookie] = useCookies(['token'])
 
-  const [posts, setPosts] = useState(postData.posts)
+  const [loadedPosts, setLoadedPosts] = useState(postData.posts)
+  const [posts, setPosts] = useState([])
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
   const [isFetching, setIsFetching] = useInfiniteScroll(
@@ -81,7 +84,7 @@ function Admin({ postData, userData }) {
       const fetchedPosts = await getPosts(20, cursor)
       setCursor(fetchedPosts.data.cursor)
       setHasNext(fetchedPosts.data.hasNext)
-      setPosts([...posts, ...fetchedPosts.data.posts])
+      setLoadedPosts([...loadedPosts, ...fetchedPosts.data.posts])
     },
     {
       threshold: 500,
@@ -91,17 +94,32 @@ function Admin({ postData, userData }) {
   const [modal, setModal] = useState({
     accept: null,
     reject: null,
-    modify: null
+    modify: null,
+    filter: null
   })
+  const [showPending, setShowPending] = useState(true)
+  const [showAccepted, setShowAccepted] = useState(false)
+  const [showRejected, setShowRejected] = useState(false)
 
   useEffect(() => {
-    if (!isFetching) return
     setIsFetching(false)
-  }, [posts])
+    filter()
+  }, [loadedPosts])
   useEffect(() => {
     const token = cookies.token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    filter()
   }, [])
+
+  const filter = () => {
+    const newPosts = loadedPosts.filter(p => {
+      const pending = showPending ? p.status === 'PENDING' : false
+      const accepted = showAccepted ? p.status === 'ACCEPTED' : false
+      const rejected = showRejected ? p.status === 'REJECTED' : false
+      return pending || accepted || rejected
+    })
+    setPosts(newPosts)
+  }
 
   const handleModal = (modalName, post = null) => {
     const newState = {
@@ -120,10 +138,10 @@ function Admin({ postData, userData }) {
   }
 
   const updatePosts = (id, data) => {
-    const updatedPosts = posts.map(post => {
+    const updatedPosts = loadedPosts.map(post => {
       return post.id === id ? data : post
     })
-    setPosts(updatedPosts)
+    setLoadedPosts(updatedPosts)
   }
 
   const handleError = err => {
@@ -181,10 +199,10 @@ function Admin({ postData, userData }) {
   const handleDelete = async post => {
     try {
       await deletePost(post._id)
-      const newPosts = posts.filter(p => {
+      const updatedPosts = loadedPosts.filter(p => {
         return post._id !== p._id
       })
-      setPosts(newPosts)
+      setLoadedPosts(updatedPosts)
       toast.success('성공적으로 삭제되었습니다.')
     } catch (err) {
       handleError(err)
@@ -195,6 +213,9 @@ function Admin({ postData, userData }) {
     <div>
       <h1>Welcome, {userData.name}</h1>
       <button onClick={logout}>로그아웃</button>
+      <span className="icon-filter" onClick={() => handleModal('filter', {})}>
+        <MdFilterList />
+      </span>
       {posts.map((v, i) => (
         <AdminCard
           post={v}
@@ -221,6 +242,13 @@ function Admin({ postData, userData }) {
         .info.info--error {
           color: #eb4034;
         }
+
+        .icon-filter {
+          cursor: pointer;
+          float: right;
+          opacity: 0.7;
+          font-size: x-large;
+        }
       `}</style>
       <AcceptModal
         post={modal.accept}
@@ -236,6 +264,16 @@ function Admin({ postData, userData }) {
         post={modal.modify}
         modalHandler={handleModal}
         onSubmit={handleModify}
+      />
+      <FilterModal
+        post={modal.filter}
+        modalHandler={handleModal}
+        states={[
+          [showPending, setShowPending],
+          [showAccepted, setShowAccepted],
+          [showRejected, setShowRejected]
+        ]}
+        filter={filter}
       />
     </div>
   )
