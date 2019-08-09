@@ -11,7 +11,13 @@ import RejectModal from '../src/components/modals/RejectModal'
 import ModifyModal from '../src/components/modals/ModifyModal'
 import { generateToken } from '../src/api/admin-token'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
-import { getPosts, acceptPost, rejectPost, modifyPost } from '../src/api/posts'
+import {
+  getPosts,
+  acceptPost,
+  rejectPost,
+  modifyPost,
+  deletePost
+} from '../src/api/posts'
 import axios from '../src/api/axios'
 
 function Login() {
@@ -64,11 +70,13 @@ function Login() {
 }
 
 function Admin({ postData, userData }) {
+  // eslint-disable-next-line
   const [cookies, setCookie, removeCookie] = useCookies(['token'])
 
   const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
-  const scrollHook = useInfiniteScroll(
+  const [hasNext, setHasNext] = useState(postData.hasNext)
+  const [isFetching, setIsFetching] = useInfiniteScroll(
     async () => {
       const fetchedPosts = await getPosts(20, cursor)
       setCursor(fetchedPosts.data.cursor)
@@ -77,17 +85,24 @@ function Admin({ postData, userData }) {
     },
     {
       threshold: 500,
-      next: postData.hasNext
+      hasNext
     }
   )
-  const [hasNext, setHasNext] = scrollHook[0]
-  const [isFetching, setIsFetching] = scrollHook[1]
-
   const [modal, setModal] = useState({
     accept: null,
     reject: null,
     modify: null
   })
+
+  useEffect(() => {
+    if (!isFetching) return
+    setIsFetching(false)
+  }, [posts])
+  useEffect(() => {
+    const token = cookies.token
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }, [])
+
   const handleModal = (modalName, post = null) => {
     const newState = {
       ...modal
@@ -163,20 +178,30 @@ function Admin({ postData, userData }) {
     }
   }
 
-  useEffect(() => {
-    setIsFetching(false)
-  }, [posts])
-  useEffect(() => {
-    const token = cookies.token
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  })
+  const handleDelete = async post => {
+    try {
+      await deletePost(post._id)
+      const newPosts = posts.filter(p => {
+        return post._id !== p._id
+      })
+      setPosts(newPosts)
+      toast.success('성공적으로 삭제되었습니다.')
+    } catch (err) {
+      handleError(err)
+    }
+  }
 
   return (
     <div>
       <h1>Welcome, {userData.name}</h1>
       <button onClick={logout}>로그아웃</button>
       {posts.map((v, i) => (
-        <AdminCard post={v} key={`card-${i}`} modalHandler={handleModal} />
+        <AdminCard
+          post={v}
+          key={`card-${i}`}
+          modalHandler={handleModal}
+          deleteHandler={handleDelete}
+        />
       ))}
       {postData.error && (
         <div className="info info--error">{postData.error}</div>

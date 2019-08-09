@@ -13,7 +13,8 @@ export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
   const [cursor, setCursor] = useState(postData.cursor)
   const [theme, setTheme] = useContext(ThemeContext)
-  const scrollHook = useInfiniteScroll(
+  const [hasNext, setHasNext] = useState(postData.hasNext)
+  const [isFetching, setIsFetching] = useInfiniteScroll(
     async () => {
       try {
         const fetchedPosts = await getPosts(10, cursor)
@@ -27,11 +28,9 @@ export default function Index({ postData, verifier }) {
     },
     {
       threshold: 500,
-      next: postData.hasNext
+      hasNext
     }
   )
-  const [hasNext, setHasNext] = scrollHook[0]
-  const [isFetching, setIsFetching] = scrollHook[1]
 
   useEffect(() => {
     if (!isFetching) return
@@ -39,7 +38,7 @@ export default function Index({ postData, verifier }) {
   }, [posts])
   useEffect(() => {
     delete axios.defaults.headers.common['Authorization']
-  })
+  }, [])
 
   const handleSubmit = async (data, reset) => {
     try {
