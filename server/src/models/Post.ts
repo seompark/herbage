@@ -62,6 +62,16 @@ class Post extends Typegoose {
   @prop()
   public fbLink?: string
 
+  @prop({
+    default: () => {
+      return crypto
+        .createHash('sha256')
+        .update(Date.now().toString())
+        .digest('hex')
+    }
+  })
+  public hash: string
+
   @prop()
   public get cursorId(): string {
     return Base64.encode(this._id.toString())
@@ -70,11 +80,6 @@ class Post extends Typegoose {
   @prop()
   public get id(): Schema.Types.ObjectId {
     return this._id
-  }
-
-  @prop()
-  public get hash(): string {
-    return crypto.createHash('sha256').update(this.createdAt.getTime().toString()).digest('hex')
   }
 
   @instanceMethod
@@ -157,7 +162,7 @@ class Post extends Typegoose {
     }
 
     const posts = await this.find({
-      ...condition,
+      ...condition
       // ...options.condition
     })
       .sort({ _id: options.admin ? 1 : -1 })
