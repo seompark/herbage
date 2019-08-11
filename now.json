@@ -3,7 +3,7 @@
   "name": "dimibamboo",
   "builds": [
     { "src": "www/next.config.js", "use": "@now/next" },
-    { "src": "server/src/routes/**/*.ts", "use": "@now/node@0.11.0" }
+    { "src": "server/src/routes/**/*.ts", "use": "@now/node@0.11.1" }
   ],
   "routes": [
     { "src": "/a1p4ca/login", "dest": "/www/a1p4ca?type=login" },

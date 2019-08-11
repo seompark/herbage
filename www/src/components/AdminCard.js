@@ -30,9 +30,11 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           title: post.title,
           content: post.content,
           fbLink: post.fbLink,
-          createdAt: post.createdAt
+          createdAt: post.createdAt,
+          hash: post.hash
         }}
       />
+      <div className="hash">{post.hash}</div>
       {post.status && <StatusChip status={post.status} />}
       <button onClick={openAcceptingModal}>승인</button>
       <button onClick={openRejectingModal}>거부</button>
@@ -43,6 +45,9 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
       <style jsx>{`
         button {
           font-family: 'Spoqa Han Sans', sans-serif;
+        }
+        .hash {
+          margin-bottom: 10px;
         }
       `}</style>
     </div>
@@ -60,7 +65,8 @@ AdminCard.propTypes = {
     createdAt: PropTypes.number.isRequired,
     status: PropTypes.string.isRequired,
     reason: PropTypes.string,
-    history: PropTypes.array.isRequired
+    history: PropTypes.array.isRequired,
+    hash: PropTypes.string
   }),
   modalHandler: PropTypes.func,
   deleteHandler: PropTypes.func

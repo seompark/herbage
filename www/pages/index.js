@@ -14,6 +14,7 @@ export default function Index({ postData, verifier }) {
   const [cursor, setCursor] = useState(postData.cursor)
   const [theme, setTheme] = useContext(ThemeContext)
   const [hasNext, setHasNext] = useState(postData.hasNext)
+  const [hash, setHash] = useState('')
   const [isFetching, setIsFetching] = useInfiniteScroll(
     async () => {
       try {
@@ -42,7 +43,8 @@ export default function Index({ postData, verifier }) {
 
   const handleSubmit = async (data, reset) => {
     try {
-      await createPost(data)
+      const post = await createPost(data)
+      await setHash(post.hash)
       reset()
       toast.success('성공적으로 제출했습니다.')
     } catch (err) {
@@ -78,6 +80,11 @@ export default function Index({ postData, verifier }) {
         </button>
       </h1>
       <Form onSubmit={handleSubmit} verifier={verifier} />
+      {hash && (
+        <div className="hash">
+          {`제보한 글의 수정 및 삭제를 위해서 다음 해시코드를 반드시 저장해주세요.\n${hash}`}
+        </div>
+      )}
       {posts && posts.map(post => <Card post={post} key={post.id} />)}
       {postData.error && (
         <div className="info info--error">{postData.error}</div>
@@ -105,6 +112,11 @@ export default function Index({ postData, verifier }) {
 
         .info.info--error {
           color: #eb4034;
+        }
+
+        .hash {
+          margin-top: 10px;
+          color: #ffab40;
         }
       `}</style>
     </>
