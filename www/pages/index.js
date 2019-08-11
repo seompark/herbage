@@ -44,7 +44,6 @@ export default function Index({ postData, verifier }) {
   const handleSubmit = async (data, reset) => {
     try {
       const post = await createPost(data)
-      console.log(post)
       await setHash(post.hash)
       reset()
       toast.success('성공적으로 제출했습니다.')
