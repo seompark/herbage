@@ -9,6 +9,7 @@ import {
 } from 'typegoose'
 import { Base64 } from 'js-base64'
 import { Schema } from 'mongoose'
+import * as crypto from 'crypto'
 
 export enum PostStatus {
   Pending = 'PENDING',
@@ -24,6 +25,7 @@ export interface PostPublicFields {
   fbLink?: string
   createdAt: number
   status: string
+  hash: string
 }
 
 export class PostHistory {
@@ -68,6 +70,11 @@ class Post extends Typegoose {
   @prop()
   public get id(): Schema.Types.ObjectId {
     return this._id
+  }
+
+  @prop()
+  public get hash(): string {
+    return crypto.createHash('sha256').update(this.createdAt.getTime().toString()).digest('hex')
   }
 
   @instanceMethod
@@ -115,7 +122,8 @@ class Post extends Typegoose {
       content: this.content,
       fbLink: this.fbLink,
       createdAt: this.createdAt.getTime(),
-      status: this.status
+      status: this.status,
+      hash: this.hash
     }
   }
 

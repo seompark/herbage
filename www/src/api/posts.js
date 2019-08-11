@@ -22,15 +22,19 @@ export async function getPosts(count = 10, cursor, { safe } = { safe: false }) {
 }
 
 export async function createPost({ title, content, answer, verifier, tag }) {
-  return axios.post('/api/posts', {
-    title,
-    content,
-    tag,
-    verifier: {
-      id: verifier.id,
-      answer: answer
-    }
-  })
+  try {
+    return (await axios.post('/api/posts', {
+      title,
+      content,
+      tag,
+      verifier: {
+        id: verifier.id,
+        answer: answer
+      }
+    })).data
+  } catch (err) {
+    return {}
+  }
 }
 
 export async function acceptPost({ id, fbLink }) {
