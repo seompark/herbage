@@ -72,7 +72,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
         {post ? (
           <CopyToClipboard
             text={
-              `#${newNumber}번째제보\n\n` +
+              `#${newNumber}번째코드\n\n` +
               (post.title
                 ? post.title.length !== 0
                   ? `제목: ${post.title}\n\n`

@@ -40,6 +40,11 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
       <button onClick={() => handleDelete()}>
         {deleteChecked ? '한번 더 클릭하세요' : '삭제'}
       </button>
+      <style jsx>{`
+        button {
+          font-family: 'Spoqa Han Sans', sans-serif;
+        }
+      `}</style>
     </div>
   )
 }
