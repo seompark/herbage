@@ -99,12 +99,13 @@ router.patch(
 )
 
 router.delete(
-  '/:id',
-  authMiddleware({ continue: false }),
+  '/:arg',
+  authMiddleware(),
   async (ctx): Promise<void> => {
-    const post = await Post.findById(ctx.params.id)
+    const post = ctx.isAdmin
+      ? await Post.findById(ctx.params.arg)
+      : await Post.findOne({ hash: ctx.params.arg })
     if (!post) throw new createError.NotFound()
-
     await post.remove()
 
     ctx.status = 200
@@ -114,7 +115,8 @@ router.delete(
 router.get(
   '/new-number',
   async (ctx): Promise<void> => {
-    const newNumber = ((await Post.find()
+    const newNumber =
+      ((await Post.find()
         .sort({ number: -1 })
         .limit(1)
         .exec())[0].number || 0) + 1
