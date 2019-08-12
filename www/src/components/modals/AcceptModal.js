@@ -79,7 +79,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
               ` ${timeText(post.createdAt)}\n\n` +
               (post.title
                 ? post.title.length !== 0
-                  ? `제목: ${post.title}\n\n`
+                  ? `<${post.title}>\n\n`
                   : ''
                 : '') +
               post.content
