@@ -83,11 +83,6 @@ class Post extends Typegoose {
     return this._id
   }
 
-  @prop()
-  public get hash(): string {
-    return crypto.createHash('sha256').update(this.createdAt.getTime().toString()).digest('hex')
-  }
-
   @instanceMethod
   public async edit(
     this: InstanceType<Post>,
