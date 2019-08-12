@@ -44,7 +44,7 @@ function Card({ post }) {
               {v}
               <a
                 style={{
-                  color: '#4CAF50',
+                  color: '#4caf50',
                   cursor: 'pointer',
                   fontWeight: '500',
                   fontFamily: 'Spoqa Han Sans, sans-serif'
@@ -78,9 +78,9 @@ function Card({ post }) {
         .check-fb {
           opacity: 0;
           color: #41adff;
-          font-family: 'Spoqa Han Sans', sans-serif;
+          font-family: 'Spoqa Han Sans', sans-serif !important;
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 500;
           margin-left: 1rem;
           transition: 0.25s opacity;
         }

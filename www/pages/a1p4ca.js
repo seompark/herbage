@@ -276,10 +276,6 @@ function Admin({ postData, userData }) {
           cursor: pointer;
         }
 
-        .nav a:hover {
-          color: #41adff;
-        }
-
         button {
           font-family: 'Spoqa Han Sans', sans-serif;
         }

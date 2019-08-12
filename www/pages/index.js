@@ -151,10 +151,6 @@ export default function Index({ postData, verifier }) {
           cursor: pointer;
         }
 
-        .nav a:hover {
-          color: #41adff;
-        }
-
         @media screen and (max-width: 600px) {
           h1 {
             font-size: 1.8em;

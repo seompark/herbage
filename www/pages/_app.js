@@ -55,6 +55,9 @@ function ThemeWrapper({ children }) {
         form {
           background-color: ${isLight ? '#fff' : '#253542'};
         }
+        a {
+          color: ${isLight ? '#4caf50' : '#0076d1'};
+        }
       `}</style>
     </>
   )
