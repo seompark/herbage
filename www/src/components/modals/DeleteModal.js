@@ -4,7 +4,7 @@ import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
-import Basemodal from './Basemodal'
+import BaseModal from './BaseModal'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -41,7 +41,7 @@ function DeleteModal({ content, modalHandler, onSubmit }) {
   }
 
   return (
-    <Basemodal modalName="delete" content={content} modalHandler={modalHandler}>
+    <BaseModal modalName="delete" content={content} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
         <div className="info">제보 삭제 이후 복구는 불가합니다.</div>
         <label htmlFor="link-input">해시값</label>
@@ -90,7 +90,7 @@ function DeleteModal({ content, modalHandler, onSubmit }) {
           }
         `}</style>
       </form>
-    </Basemodal>
+    </BaseModal>
   )
 }
 
