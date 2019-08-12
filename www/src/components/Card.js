@@ -31,7 +31,7 @@ function Card({ post }) {
             .join('')
             .trim()
             .split('\n')
-            .slice(0, 4)
+            .slice(0, 3)
             .join('\n')
             .replace(/^\s+|\s+$/g, '')
             .concat('...')
@@ -44,9 +44,10 @@ function Card({ post }) {
               {v}
               <a
                 style={{
-                  color: 'green',
+                  color: '#4CAF50',
                   cursor: 'pointer',
-                  fontWeight: 'bold'
+                  fontWeight: '500',
+                  fontFamily: 'Spoqa Han Sans, sans-serif'
                 }}
                 onClick={() => setShowMore(true)}
               >
