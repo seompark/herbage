@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types'
-import AdminModal from './AdminModal'
+import Basemodal from './Basemodal'
 
 function FilterModal({ post, modalHandler, states, filter }) {
   const [pending, setPending] = states[0]
   const [accepted, setAccepted] = states[1]
   const [rejected, setRejected] = states[2]
+  const [deleted, setDeleted] = states[3]
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -12,7 +13,7 @@ function FilterModal({ post, modalHandler, states, filter }) {
     filter()
   }
   return (
-    <AdminModal modalName="filter" post={post} modalHandler={modalHandler}>
+    <Basemodal modalName="filter" content={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="pending-checkbox">대기</label>
         <input
@@ -38,6 +39,14 @@ function FilterModal({ post, modalHandler, states, filter }) {
           checked={rejected}
           onChange={e => setRejected(e.target.checked)}
         />
+        <label htmlFor="deleted-checkbox">삭제</label>
+        <input
+          id="deleted-checkbox"
+          type="checkbox"
+          name="filter"
+          checked={deleted}
+          onChange={e => setDeleted(e.target.checked)}
+        />
         <br />
         <button type="submit">필터</button>
         <style jsx>{`
@@ -60,7 +69,7 @@ function FilterModal({ post, modalHandler, states, filter }) {
           }
         `}</style>
       </form>
-    </AdminModal>
+    </Basemodal>
   )
 }
 

@@ -4,7 +4,7 @@ import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
-import AdminModal from './AdminModal'
+import Basemodal from './Basemodal'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { getNewNumber } from '../../api/posts'
 
@@ -57,7 +57,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
     if (post) numberTask()
   }, [post])
   return (
-    <AdminModal modalName="accept" post={post} modalHandler={modalHandler}>
+    <Basemodal modalName="accept" content={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="link-input">페이스북 링크</label>
         <input
@@ -119,7 +119,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
           }
         `}</style>
       </form>
-    </AdminModal>
+    </Basemodal>
   )
 }
 

@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import { IoIosClose } from 'react-icons/io'
 
-function AdminModal({ post, modalName, modalHandler, children }) {
+function BaseModal({ content, modalName, modalHandler, children }) {
   const close = () => modalHandler(modalName)
 
   return (
-    <div className={`modal__overlay ${post ? 'opened' : 'closed'}`}>
+    <div className={`modal__overlay ${content ? 'opened' : 'closed'}`}>
       <div className="modal">
         <span className="icon-close" onClick={close}>
           <IoIosClose />
@@ -60,11 +60,11 @@ function AdminModal({ post, modalName, modalHandler, children }) {
   )
 }
 
-AdminModal.propTypes = {
-  post: PropTypes.object,
+BaseModal.propTypes = {
+  content: PropTypes.object,
   modalName: PropTypes.string,
   children: PropTypes.element,
   modalHandler: PropTypes.func
 }
 
-export default AdminModal
+export default BaseModal

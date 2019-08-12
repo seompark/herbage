@@ -4,7 +4,7 @@ import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
-import AdminModal from './AdminModal'
+import Basemodal from './Basemodal'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -47,7 +47,7 @@ function RejectModal({ post, modalHandler, onSubmit }) {
     setLoading(false)
   }
   return (
-    <AdminModal modalName="reject" post={post} modalHandler={modalHandler}>
+    <Basemodal modalName="reject" content={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="reason-input">사유</label>
         <input
@@ -91,7 +91,7 @@ function RejectModal({ post, modalHandler, onSubmit }) {
           }
         `}</style>
       </form>
-    </AdminModal>
+    </Basemodal>
   )
 }
 
