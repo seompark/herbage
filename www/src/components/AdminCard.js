@@ -22,7 +22,7 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
   }
 
   return (
-    <div>
+    <div className="card">
       <Card
         post={{
           id: post.id,
@@ -34,17 +34,26 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           hash: post.hash
         }}
       />
-      <div className="hash">{post.hash}</div>
-      {post.status && <StatusChip status={post.status} />}
-      <button onClick={openAcceptingModal}>승인</button>
-      <button onClick={openRejectingModal}>거부</button>
-      <button onClick={openModifyingModal}>수정</button>
-      <button onClick={() => handleDelete()}>
-        {deleteChecked ? '한번 더 클릭하세요' : '삭제'}
-      </button>
+      <div className="card--admin">
+        <div className="hash">{post.hash}</div>
+        {post.status && <StatusChip status={post.status} />}
+        <button onClick={openAcceptingModal}>승인</button>
+        <button onClick={openRejectingModal}>거부</button>
+        <button onClick={openModifyingModal}>수정</button>
+        <button onClick={() => handleDelete()}>
+          {deleteChecked ? '한번 더 클릭하세요' : '삭제'}
+        </button>
+      </div>
       <style jsx>{`
         button {
           font-family: 'Spoqa Han Sans', sans-serif;
+        }
+        .card {
+          border-radius: 7.5px;
+        }
+        .card--admin {
+          padding-left: 2rem;
+          padding-bottom: 2rem;
         }
         .hash {
           margin-bottom: 10px;

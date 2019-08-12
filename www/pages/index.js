@@ -163,8 +163,6 @@ export default function Index({ postData, verifier }) {
           .nav a {
             font-size: 14px;
             margin-left: 1rem;
-            height: 1.8em;
-            line-height: 1.8em;
           }
         }
 

@@ -29,9 +29,7 @@ function BaseModal({ content, modalName, modalHandler, children }) {
           max-width: 700px;
           box-sizing: border-box;
           padding: 24px;
-          border: solid 1px #f3f3f3;
           margin: 5vh auto;
-          background-color: #fff;
           border-radius: 6px;
           box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5);
         }

@@ -60,15 +60,23 @@ function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={inputValue}
-        onChange={e => setInputValue(e.target.value)}
-        type="password"
-        placeholder="입력하세요"
-      />
-      <button type="submit">{isLoading ? '인증 중...' : '로그인'}</button>
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <input
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          type="password"
+          placeholder="입력하세요"
+        />
+        <button type="submit">{isLoading ? '인증 중...' : '로그인'}</button>
+      </form>
+      <style jsx>{`
+        form {
+          padding: 2rem;
+          border-radius: 7.5px;
+        }
+      `}</style>
+    </>
   )
 }
 
@@ -214,12 +222,12 @@ function Admin({ postData, userData }) {
 
   return (
     <div>
-      <h1>
-        Welcome, {userData.name}
-        <button style={{ fontSize: 16, float: 'right' }} onClick={logout}>
-          로그아웃
-        </button>
-      </h1>
+      <div className="nav">
+        <h1>Welcome, {userData.name}</h1>
+        <div className="nav-items">
+          <a onClick={logout}>로그아웃</a>
+        </div>
+      </div>
       <span className="icon-filter" onClick={() => handleModal('filter', {})}>
         <MdFilterList />
       </span>
@@ -240,7 +248,38 @@ function Admin({ postData, userData }) {
       )}
       {!postData.error && isFetching && <div className="info">로딩 중...</div>}
       <style jsx>{`
-        h1,
+        h1 {
+          display: inline;
+          margin: 0;
+          font-family: 'Spoqa Han Sans', sans-serif;
+        }
+
+        h1 > span {
+          font-family: 'Spoqa Han Sans', sans-serif;
+        }
+
+        .nav {
+          font-family: 'Spoqa Han Sans', sans-serif;
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .nav-items {
+          margin: auto 0;
+        }
+
+        .nav a {
+          font-size: 18px;
+          font-family: 'Spoqa Han Sans', sans-serif;
+          text-decoration: none;
+          margin-left: 2rem;
+          cursor: pointer;
+        }
+
+        .nav a:hover {
+          color: #41adff;
+        }
+
         button {
           font-family: 'Spoqa Han Sans', sans-serif;
         }

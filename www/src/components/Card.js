@@ -59,7 +59,10 @@ function Card({ post }) {
         )}
       <style jsx>{`
         .card {
-          margin-bottom: 2.5rem;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+          padding: 2rem;
+          border-radius: 7.5px;
         }
 
         .card * {

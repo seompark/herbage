@@ -87,44 +87,46 @@ function Form({ onSubmit, verifier }) {
         <div className="error">{verifier.error}</div>
       ) : (
         <>
-          <label htmlFor="title-input">제목 (선택)</label>
-          <input
-            id="title-input"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            onKeyPress={preventSubmitOnEnter}
-            style={{ width: '25%', minWidth: 250 }}
-            type="text"
-            placeholder="제목 (선택)"
-          />
-          <label htmlFor="cert-input">학생 인증</label>
-          <input
-            id="cert-input"
-            value={answer}
-            onChange={e => setAnswer(e.target.value)}
-            onKeyPress={preventSubmitOnEnter}
-            style={{ width: '40%', minWidth: 250 }}
-            type="text"
-            placeholder={verifier.question}
-            required
-          />
-          <label htmlFor="tag-select">태그 선택</label>
-          <select
-            id="tag-select"
-            value={tag}
-            onChange={e => setTag(e.target.value)}
-            options={tags}
-            required
-          >
-            <option value="" disabled hidden>
-              태그 선택
-            </option>
-            {tags.map((v, i) => (
-              <option value={v} key={i}>
-                {v}
+          <div className="flex">
+            <label htmlFor="title-input">제목 (선택)</label>
+            <input
+              id="title-input"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              onKeyPress={preventSubmitOnEnter}
+              style={{ width: '25%', minWidth: 250 }}
+              type="text"
+              placeholder="제목 (선택)"
+            />
+            <label htmlFor="cert-input">학생 인증</label>
+            <input
+              id="cert-input"
+              value={answer}
+              onChange={e => setAnswer(e.target.value)}
+              onKeyPress={preventSubmitOnEnter}
+              style={{ width: '40%', minWidth: 250 }}
+              type="text"
+              placeholder={verifier.question}
+              required
+            />
+            <label htmlFor="tag-select">태그 선택</label>
+            <select
+              id="tag-select"
+              value={tag}
+              onChange={e => setTag(e.target.value)}
+              options={tags}
+              required
+            >
+              <option value="" disabled hidden>
+                태그 선택
               </option>
-            ))}
-          </select>
+              {tags.map((v, i) => (
+                <option value={v} key={i}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
           <label htmlFor="content-textarea">내용</label>
           <TextArea
             id="content-textarea"
@@ -148,16 +150,34 @@ function Form({ onSubmit, verifier }) {
           </button>
         </>
       )}
-
       {spinAnimation.styles}
       <style jsx>{`
         * {
           font-family: 'Spoqa Han Sans', sans-serif;
         }
 
+        form {
+          margin-bottom: 1rem;
+          padding: 2rem;
+          border-radius: 7.5px;
+        }
+
         .error {
           text-align: center;
           font-size: 14px;
+        }
+
+        .flex {
+          display: flex;
+          align-items: center;
+        }
+
+        .flex input {
+          flex: 1;
+        }
+
+        .flex select {
+          margin-right: auto;
         }
 
         input {
@@ -171,7 +191,6 @@ function Form({ onSubmit, verifier }) {
         select {
           display: inline-block;
           text-align: center;
-          text-align-center: center;
         }
       `}</style>
     </form>

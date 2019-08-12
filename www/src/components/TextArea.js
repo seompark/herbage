@@ -13,6 +13,7 @@ function TextArea({ onUpdate, ...props }) {
           height: 5rem;
           font-size: 16px;
           transition: 0.25s ease-out;
+          resize: none;
         }
 
         textarea::placeholder {
