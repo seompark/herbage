@@ -2,6 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { format } from 'date-fns'
 import { FiArrowLeft } from 'react-icons/fi'
+import timeText from '../utils/timeText'
 
 function Card({ post }) {
   const [showMore, setShowMore] = useState(false)
@@ -12,13 +13,16 @@ function Card({ post }) {
     <div className="card">
       <h3>
         <a href={post.fbLink} target="_blank">
-          {post.number || '?'}번째 제보
+          {post.number || '?'}번째 코드
         </a>
         <span className="check-fb">
           <FiArrowLeft style={{ verticalAlign: 'middle' }} /> 페이스북에서 확인
         </span>
       </h3>
-      <span>{format(post.createdAt, 'YYYY년 MM월 DD일 HH시 mm분')}</span>
+      <span>
+        {format(post.createdAt, 'YYYY년 MM월 DD일') +
+          ` ${timeText(post.createdAt)}`}
+      </span>
       {post.title && <h4>{post.title}</h4>}
       {(isLong && !showMore
         ? post.content
