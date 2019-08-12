@@ -72,6 +72,7 @@ function DeleteModal({ content, modalHandler, onSubmit }) {
           }
 
           .info {
+            color: #f44336;
             margin-bottom: 10px;
           }
 

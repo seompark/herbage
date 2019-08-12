@@ -95,22 +95,18 @@ export default function Index({ postData, verifier }) {
 
   return (
     <>
-      <h1>
-        디<span style={{ fontSize: 14 }}>미고</span>대
-        <span style={{ fontSize: 14 }}>나무</span>숲
-        <button
-          style={{ fontSize: 16, float: 'right' }}
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >
-          {theme === 'dark' ? '밝은' : '어두운'} 테마
-        </button>
-        <button
-          style={{ fontSize: 16, float: 'right' }}
-          onClick={() => handleModal('delete', {})}
-        >
-          제보 삭제
-        </button>
-      </h1>
+      <div className="nav">
+        <h1>
+          디<span style={{ fontSize: 14 }}>미고</span>대
+          <span style={{ fontSize: 14 }}>나무</span>숲
+        </h1>
+        <div className="nav-items">
+          <a onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+            {theme === 'dark' ? '밝은' : '어두운'} 테마
+          </a>
+          <a onClick={() => handleModal('delete', {})}>제보 삭제</a>
+        </div>
+      </div>
       <Form onSubmit={handleSubmit} verifier={verifier} />
       {hash && (
         <div className="hash">
@@ -127,12 +123,49 @@ export default function Index({ postData, verifier }) {
       )}
       <style jsx>{`
         h1 {
+          display: inline;
+          margin: 0;
           font-family: 'Spoqa Han Sans', sans-serif;
-          margin-bottom: 2rem;
         }
 
         h1 > span {
           font-family: 'Spoqa Han Sans', sans-serif;
+        }
+
+        .nav {
+          font-family: 'Spoqa Han Sans', sans-serif;
+          margin-bottom: 2rem;
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .nav-items {
+          margin: auto 0;
+        }
+
+        .nav a {
+          font-size: 18px;
+          font-family: 'Spoqa Han Sans', sans-serif;
+          text-decoration: none;
+          margin-left: 2rem;
+          cursor: pointer;
+        }
+
+        .nav a:hover {
+          color: #41adff;
+        }
+
+        @media screen and (max-width: 600px) {
+          h1 {
+            font-size: 1.8em;
+          }
+
+          .nav a {
+            font-size: 14px;
+            margin-left: 1rem;
+            height: 1.8em;
+            line-height: 1.8em;
+          }
         }
 
         .info {
