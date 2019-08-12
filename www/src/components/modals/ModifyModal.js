@@ -4,7 +4,7 @@ import { FiLoader } from 'react-icons/fi'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import css from 'styled-jsx/css'
-import Basemodal from './Basemodal'
+import BaseModal from './BaseModal'
 import TextArea from '../TextArea'
 
 const spinAnimation = css.resolve`
@@ -51,7 +51,7 @@ function ModifyModal({ post, modalHandler, onSubmit }) {
     modalHandler(name)
   }
   return (
-    <Basemodal modalName="modify" content={post} modalHandler={handleClose}>
+    <BaseModal modalName="modify" content={post} modalHandler={handleClose}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="content-textarea">내용</label>
         <TextArea
@@ -96,7 +96,7 @@ function ModifyModal({ post, modalHandler, onSubmit }) {
           }
         `}</style>
       </form>
-    </Basemodal>
+    </BaseModal>
   )
 }
 

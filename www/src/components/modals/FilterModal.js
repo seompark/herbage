@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import Basemodal from './Basemodal'
+import BaseModal from './BaseModal'
 
 function FilterModal({ post, modalHandler, states, filter }) {
   const [pending, setPending] = states[0]
@@ -13,7 +13,7 @@ function FilterModal({ post, modalHandler, states, filter }) {
     filter()
   }
   return (
-    <Basemodal modalName="filter" content={post} modalHandler={modalHandler}>
+    <BaseModal modalName="filter" content={post} modalHandler={modalHandler}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="pending-checkbox">대기</label>
         <input
@@ -69,7 +69,7 @@ function FilterModal({ post, modalHandler, states, filter }) {
           }
         `}</style>
       </form>
-    </Basemodal>
+    </BaseModal>
   )
 }
 
