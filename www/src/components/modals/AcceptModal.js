@@ -7,6 +7,8 @@ import css from 'styled-jsx/css'
 import Basemodal from './Basemodal'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { getNewNumber } from '../../api/posts'
+import { format } from 'date-fns'
+import timeText from '../../utils/timeText'
 
 const spinAnimation = css.resolve`
   .spin {
@@ -72,7 +74,9 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
         {post ? (
           <CopyToClipboard
             text={
-              `#${newNumber}번째코드\n\n` +
+              `#${newNumber}번째코드\n` +
+              format(post.createdAt, 'YYYY년 MM월 DD일') +
+              ` ${timeText(post.createdAt)}\n\n` +
               (post.title
                 ? post.title.length !== 0
                   ? `제목: ${post.title}\n\n`
