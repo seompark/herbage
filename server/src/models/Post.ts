@@ -14,7 +14,8 @@ import * as crypto from 'crypto'
 export enum PostStatus {
   Pending = 'PENDING',
   Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED'
+  Rejected = 'REJECTED',
+  Deleted = 'DELETED'
 }
 
 export interface PostPublicFields {
@@ -100,6 +101,14 @@ class Post extends Typegoose {
   ): Promise<InstanceType<Post>> {
     this.status = PostStatus.Rejected
     this.reason = reason
+    return this.save()
+  }
+
+  @instanceMethod
+  public async setDeleted(
+    this: InstanceType<Post>
+  ): Promise<InstanceType<Post>> {
+    this.status = PostStatus.Deleted
     return this.save()
   }
 

@@ -21,6 +21,7 @@ import {
 } from '../src/api/posts'
 import axios from '../src/api/axios'
 import { MdFilterList } from 'react-icons/md'
+import { ACCEPTED, REJECTED, PENDING, DELETED } from '../src/utils/post-status'
 
 function Login() {
   const [inputValue, setInputValue] = useState('')
@@ -100,6 +101,7 @@ function Admin({ postData, userData }) {
   const [showPending, setShowPending] = useState(true)
   const [showAccepted, setShowAccepted] = useState(false)
   const [showRejected, setShowRejected] = useState(false)
+  const [showDeleted, setShowDeleted] = useState(false)
 
   useEffect(() => {
     setIsFetching(false)
@@ -113,19 +115,20 @@ function Admin({ postData, userData }) {
 
   const filter = () => {
     const newPosts = loadedPosts.filter(p => {
-      const pending = showPending ? p.status === 'PENDING' : false
-      const accepted = showAccepted ? p.status === 'ACCEPTED' : false
-      const rejected = showRejected ? p.status === 'REJECTED' : false
-      return pending || accepted || rejected
+      const pending = showPending ? p.status === PENDING : false
+      const accepted = showAccepted ? p.status === ACCEPTED : false
+      const rejected = showRejected ? p.status === REJECTED : false
+      const deleted = showDeleted ? p.status === DELETED : false
+      return pending || accepted || rejected || deleted
     })
     setPosts(newPosts)
   }
 
-  const handleModal = (modalName, post = null) => {
+  const handleModal = (modalName, content = null) => {
     const newState = {
       ...modal
     }
-    newState[modalName] = post
+    newState[modalName] = content
     setModal(newState)
   }
 
@@ -281,7 +284,8 @@ function Admin({ postData, userData }) {
         states={[
           [showPending, setShowPending],
           [showAccepted, setShowAccepted],
-          [showRejected, setShowRejected]
+          [showRejected, setShowRejected],
+          [showDeleted, setShowDeleted]
         ]}
         filter={filter}
       />
@@ -342,7 +346,7 @@ A1P4CA.getInitialProps = async ctx => {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
   try {
-    const postData = await getPosts(5)
+    const postData = await getPosts(15)
     const userData = jwt.decode(token)
 
     return {

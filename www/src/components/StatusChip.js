@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { ACCEPTED, REJECTED, PENDING } from '../utils/post-status'
+import { ACCEPTED, REJECTED, PENDING, DELETED } from '../utils/post-status'
 
 function StatusChip({ status }) {
   const statusFactory = (text, bgColor, color) => ({
@@ -15,6 +15,8 @@ function StatusChip({ status }) {
         return statusFactory('거부', '#F44336', '#fff')
       case PENDING:
         return statusFactory('대기', '#FFAB40', '#fff')
+      case DELETED:
+        return statusFactory('삭제', '#F44336', '#fff')
     }
   })()
 

@@ -106,7 +106,8 @@ router.delete(
       ? await Post.findById(ctx.params.arg)
       : await Post.findOne({ hash: ctx.params.arg })
     if (!post) throw new createError.NotFound()
-    await post.remove()
+
+    ctx.isAdmin ? await post.remove() : await post.setDeleted()
 
     ctx.status = 200
   }

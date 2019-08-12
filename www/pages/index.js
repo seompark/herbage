@@ -5,9 +5,10 @@ import Form from '../src/components/Form'
 import Card from '../src/components/Card'
 import ThemeContext from '../src/contexts/ThemeContext'
 import { getVerifier } from '../src/api/verifier'
-import { createPost, getPosts } from '../src/api/posts'
+import { createPost, deletePost, getPosts } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 import axios from '../src/api/axios'
+import DeleteModal from '../src/components/modals/DeleteModal'
 
 export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
@@ -32,6 +33,9 @@ export default function Index({ postData, verifier }) {
       hasNext
     }
   )
+  const [modal, setModal] = useState({
+    delete: null
+  })
 
   useEffect(() => {
     if (!isFetching) return
@@ -41,6 +45,34 @@ export default function Index({ postData, verifier }) {
     delete axios.defaults.headers.common['Authorization']
   }, [])
 
+  const handleError = err => {
+    if (!err.response) {
+      toast.error('네트워크에 문제가 있습니다.')
+      return
+    }
+
+    switch (err.response.status) {
+      case 451:
+        toast.error('인증에 실패했습니다.')
+        break
+      case 400:
+        toast.error('잘못된 값을 보냈습니다.')
+        break
+      case 404:
+        toast.error('존재하지 않는 글입니다.')
+        break
+      default:
+        toast.error('서버에 문제가 생겼습니다.')
+        break
+    }
+  }
+  const handleModal = (modalName, content = null) => {
+    const newState = {
+      ...modal
+    }
+    newState[modalName] = content
+    setModal(newState)
+  }
   const handleSubmit = async (data, reset) => {
     try {
       const post = await createPost(data)
@@ -48,22 +80,16 @@ export default function Index({ postData, verifier }) {
       reset()
       toast.success('성공적으로 제출했습니다.')
     } catch (err) {
-      if (!err.response) {
-        toast.error('네트워크에 문제가 있습니다.')
-        return
-      }
-
-      switch (err.response.status) {
-        case 451:
-          toast.error('인증에 실패했습니다.')
-          break
-        case 400:
-          toast.error('잘못된 값을 보냈습니다.')
-          break
-        default:
-          toast.error('서버에 문제가 생겼습니다.')
-          break
-      }
+      handleError(err)
+    }
+  }
+  const handleDelete = async (hash, reset) => {
+    try {
+      await deletePost(hash)
+      reset()
+      toast.success('제보가 삭제되었습니다.')
+    } catch (err) {
+      handleError(err)
     }
   }
 
@@ -77,6 +103,12 @@ export default function Index({ postData, verifier }) {
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
           {theme === 'dark' ? '밝은' : '어두운'} 테마
+        </button>
+        <button
+          style={{ fontSize: 16, float: 'right' }}
+          onClick={() => handleModal('delete', {})}
+        >
+          제보 삭제
         </button>
       </h1>
       <Form onSubmit={handleSubmit} verifier={verifier} />
@@ -119,6 +151,11 @@ export default function Index({ postData, verifier }) {
           color: #ffab40;
         }
       `}</style>
+      <DeleteModal
+        content={modal.delete}
+        modalHandler={handleModal}
+        onSubmit={handleDelete}
+      />
     </>
   )
 }
