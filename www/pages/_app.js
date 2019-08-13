@@ -25,6 +25,11 @@ function ThemeWrapper({ children }) {
     <>
       <Head>
         <title>디대숲</title>
+        // 테마 전환시 깨짐 방지
+        <link
+          rel="stylesheet"
+          href={`https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.css`}
+        />
         <link
           rel="stylesheet"
           href={`https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/${theme}.css`}
