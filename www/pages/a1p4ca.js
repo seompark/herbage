@@ -88,18 +88,18 @@ function Admin({ postData, userData }) {
   const [posts, setPosts] = useState([])
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
-  const [isFetching, setIsFetching] = useInfiniteScroll(
-    async () => {
-      const fetchedPosts = await getPosts(20, cursor)
-      setCursor(fetchedPosts.data.cursor)
-      setHasNext(fetchedPosts.data.hasNext)
-      setLoadedPosts([...loadedPosts, ...fetchedPosts.data.posts])
-    },
-    {
-      threshold: 500,
-      hasNext
-    }
-  )
+
+  const fetch = async () => {
+    const fetchedPosts = await getPosts(20, cursor)
+    setCursor(fetchedPosts.data.cursor)
+    setHasNext(fetchedPosts.data.hasNext)
+    setLoadedPosts([...loadedPosts, ...fetchedPosts.data.posts])
+  }
+
+  const [isFetching, setIsFetching] = useInfiniteScroll(fetch, {
+    threshold: 500,
+    hasNext
+  })
   const [modal, setModal] = useState({
     accept: null,
     reject: null,
@@ -121,7 +121,7 @@ function Admin({ postData, userData }) {
     filter()
   }, [])
 
-  const filter = () => {
+  const filter = async () => {
     const newPosts = loadedPosts.filter(p => {
       const pending = showPending ? p.status === PENDING : false
       const accepted = showAccepted ? p.status === ACCEPTED : false
@@ -129,6 +129,10 @@ function Admin({ postData, userData }) {
       const deleted = showDeleted ? p.status === DELETED : false
       return pending || accepted || rejected || deleted
     })
+    if (newPosts.length === 0 && hasNext) {
+      fetch()
+      return
+    }
     setPosts(newPosts)
   }
 
@@ -274,6 +278,17 @@ function Admin({ postData, userData }) {
           text-decoration: none;
           margin-left: 2rem;
           cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+          h1 {
+            font-size: 1.8em;
+          }
+
+          .nav a {
+            font-size: 14px;
+            margin-left: 1rem;
+          }
         }
 
         button {
