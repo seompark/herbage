@@ -179,6 +179,7 @@ export default function Index({ postData, verifier }) {
           margin-bottom: 1rem;
           padding: 2rem;
           border-radius: 7.5px;
+          word-break: break-word;
         }
       `}</style>
       <DeleteModal
