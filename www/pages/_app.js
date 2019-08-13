@@ -52,6 +52,9 @@ function ThemeWrapper({ children }) {
         button:hover {
           background-color: ${isLight ? '#a5d6a7' : '#324759'};
         }
+        .tag {
+          background-color: ${isLight ? '#e8f5e9' : '#161f27'};
+        }
         .card,
         .modal,
         form {

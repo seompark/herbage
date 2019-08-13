@@ -82,7 +82,8 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
                   ? `<${post.title}>\n\n`
                   : ''
                 : '') +
-              post.content
+              post.content +
+              `\n\n#${post.tag.replace(/\s/g, '')}`
             }
             onCopy={() => toast.success('클립보드에 복사되었습니다.')}
           >
@@ -119,7 +120,6 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
           select {
             display: inline-block;
             text-align: center;
-            text-align-center: center;
           }
         `}</style>
       </form>
@@ -134,6 +134,7 @@ AcceptModal.propTypes = {
     number: PropTypes.number,
     title: PropTypes.string,
     content: PropTypes.string.isRequired,
+    tag: PropTypes.string,
     fbLink: PropTypes.string,
     createdAt: PropTypes.number.isRequired,
     status: PropTypes.string.isRequired,

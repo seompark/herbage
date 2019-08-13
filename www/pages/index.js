@@ -109,7 +109,7 @@ export default function Index({ postData, verifier }) {
       </div>
       <Form onSubmit={handleSubmit} verifier={verifier} />
       {hash && (
-        <div className="hash">
+        <div className="hash card">
           {`제보한 글의 수정 및 삭제를 위해서 다음 해시코드를 반드시 저장해주세요.\n${hash}`}
         </div>
       )}
@@ -174,8 +174,11 @@ export default function Index({ postData, verifier }) {
         }
 
         .hash {
-          margin-top: 10px;
           color: #ffab40;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+          padding: 2rem;
+          border-radius: 7.5px;
         }
       `}</style>
       <DeleteModal

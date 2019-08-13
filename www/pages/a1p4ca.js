@@ -214,10 +214,10 @@ function Admin({ postData, userData }) {
   const handleDelete = async post => {
     try {
       await deletePost(post._id)
-      const newPosts = posts.filter(p => {
+      const newPosts = loadedPosts.filter(p => {
         return post._id !== p._id
       })
-      setPosts(newPosts)
+      setLoadedPosts(newPosts)
       toast.success('성공적으로 삭제되었습니다.')
     } catch (err) {
       handleError(err)

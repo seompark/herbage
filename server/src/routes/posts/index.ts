@@ -54,7 +54,8 @@ router.post(
 
     const result = await new Post({
       title: body.title,
-      content: body.content
+      content: body.content,
+      tag: body.tag
     }).save()
 
     // https://stackoverflow.com/questions/19199872/best-practice-for-restful-post-response

@@ -58,6 +58,7 @@ function Card({ post }) {
             <p key={i}>{v}</p>
           )
         )}
+      {post.tag && <div className="tag">{post.tag}</div>}
       <style jsx>{`
         .card {
           margin-top: 1rem;
@@ -68,6 +69,13 @@ function Card({ post }) {
 
         .card * {
           font-family: 'Iropke Batang', serif;
+        }
+
+        .tag {
+          display: inline-block;
+          padding: 0.5rem 1rem;
+          border-radius: 7.5px;
+          font-size: 14px;
         }
 
         h3 {
@@ -110,6 +118,7 @@ Card.propTypes = {
     number: PropTypes.number,
     title: PropTypes.string,
     content: PropTypes.string.isRequired,
+    tag: PropTypes.string.isRequired,
     fbLink: PropTypes.string,
     createdAt: PropTypes.number
   })

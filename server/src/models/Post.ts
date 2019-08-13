@@ -23,6 +23,7 @@ export interface PostPublicFields {
   number?: number
   title?: string
   content: string
+  tag: string
   fbLink?: string
   createdAt: number
   status: string
@@ -50,6 +51,9 @@ class Post extends Typegoose {
 
   @prop({ required: true, trim: true })
   public content: string
+
+  @prop({ required: true })
+  public tag: string
 
   @prop({ enum: PostStatus, default: PostStatus.Pending })
   public status: PostStatus
@@ -134,6 +138,7 @@ class Post extends Typegoose {
       number: this.number,
       title: this.title,
       content: this.content,
+      tag: this.tag,
       fbLink: this.fbLink,
       createdAt: this.createdAt.getTime(),
       status: this.status,
