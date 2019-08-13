@@ -83,7 +83,7 @@ function AcceptModal({ post, modalHandler, onSubmit }) {
                   : ''
                 : '') +
               post.content +
-              `\n\n#${post.tag.replace(/\s/g, '')}`
+              `\n\n#${(post.tag || '').replace(/\s/g, '')}`
             }
             onCopy={() => toast.success('클립보드에 복사되었습니다.')}
           >
