@@ -84,7 +84,7 @@ class CustomApp extends App {
         typeof Component.getInitialProps === 'function'
           ? await Component.getInitialProps(ctx)
           : {},
-      cookies: new Cookie(ctx.req.headers.cookie)
+      cookies: new Cookie(ctx.req ? ctx.req.headers.cookie : null)
     }
   }
 
