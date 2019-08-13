@@ -11,29 +11,26 @@ import axios from '../src/api/axios'
 
 function ThemeWrapper({ children }) {
   const [cookies, setCookie] = useCookies(['theme'])
-  const [isLight, setIsLight] = useState(cookies.theme === 'light')
+  const [theme, setTheme] = useState(cookies.theme || 'light')
+  const [isLight, setIsLight] = useState(
+    cookies.theme ? cookies.theme === 'light' : true
+  )
 
   useEffect(() => {
-    setIsLight(cookies.theme === 'light')
-  }, [cookies])
+    setCookie('theme', theme, { path: '/', maxAge: 60 * 60 * 24 * 365 })
+    setIsLight(theme === 'light')
+  }, [theme])
 
   return (
     <>
       <Head>
         <title>디대숲</title>
-        // 테마 전환할 때 스타일이 잠깐 깨지는 현상을 방지합니다.
         <link
           rel="stylesheet"
-          href={`https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/${cookies.theme}.css`}
+          href={`https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/${theme}.css`}
         />
       </Head>
-      <ThemeContext.Provider
-        value={[
-          cookies.theme,
-          theme =>
-            setCookie('theme', theme, { path: '/', maxAge: 60 * 60 * 24 * 365 })
-        ]}
-      >
+      <ThemeContext.Provider value={[theme, t => setTheme(t)]}>
         {children}
       </ThemeContext.Provider>
       <ToastContainer />
@@ -82,7 +79,7 @@ class CustomApp extends App {
         typeof Component.getInitialProps === 'function'
           ? await Component.getInitialProps(ctx)
           : {},
-      cookies: !process.browser && new Cookie(ctx.req.headers.cookie)
+      cookies: new Cookie(ctx.req.headers.cookie)
     }
   }
 
