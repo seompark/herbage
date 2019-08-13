@@ -10,6 +10,21 @@ class CustomDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* Global Site Tag (gtag.js) - Google Analytics */}
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=UA-128564038-3`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-128564038-3');
+          `
+            }}
+          />
           <link
             rel="preload"
             as="font"
