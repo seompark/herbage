@@ -53,10 +53,12 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
         }
         .card--admin {
           padding-left: 2rem;
+          padding-right: 2rem;
           padding-bottom: 2rem;
         }
         .hash {
           margin-bottom: 10px;
+          word-break: break-word;
         }
       `}</style>
     </div>
