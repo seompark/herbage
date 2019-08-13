@@ -169,19 +169,31 @@ function Form({ onSubmit, verifier }) {
 
         .flex {
           display: flex;
-          align-items: center;
-        }
-
-        .flex input {
-          flex: 1;
-        }
-
-        .flex select {
-          margin-right: auto;
+          width: 100%;
         }
 
         input {
           display: inline-block !important;
+          flex: 3;
+        }
+
+        select {
+          flex: 1;
+        }
+
+        @media screen and (max-width: 600px) {
+          .flex {
+            flex-direction: column;
+          }
+
+          input {
+            width: auto !important;
+            margin-right: 0;
+          }
+
+          select {
+            max-width: 6rem;
+          }
         }
 
         label {
@@ -191,6 +203,7 @@ function Form({ onSubmit, verifier }) {
         select {
           display: inline-block;
           text-align: center;
+          margin: 0 0 6px 0;
         }
       `}</style>
     </form>
