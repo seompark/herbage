@@ -90,6 +90,8 @@ router.patch(
     if (!post) throw new createError.NotFound()
 
     if (body.status) {
+      if (body.status === 'ACCEPTED' && post.status === 'ACCEPTED')
+        throw new createError.UnavailableForLegalReasons()
       switch (body.status) {
         case PostStatus.Accepted:
           if (!body.fbLink) throw new createError.BadRequest()

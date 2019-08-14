@@ -172,6 +172,9 @@ function Admin({ postData, userData }) {
       case 400:
         toast.error('잘못된 값을 보냈습니다.')
         break
+      case 451:
+        toast.error('이미 승인된 제보입니다.')
+        break
       default:
         toast.error('서버에 문제가 생겼습니다.')
         break
