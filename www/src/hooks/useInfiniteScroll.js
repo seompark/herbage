@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 
-const useInfiniteScroll = (callback, { threshold = 500, hasNext }) => {
+const useInfiniteScroll = (
+  callback,
+  { threshold = 500, hasNext, filterState }
+) => {
   const [isFetching, setIsFetching] = useState(false)
 
   useEffect(() => {
     if (!hasNext) return
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [hasNext])
+  }, [hasNext, filterState])
 
   useEffect(() => {
     if (!isFetching) return
