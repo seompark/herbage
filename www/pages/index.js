@@ -5,10 +5,10 @@ import Form from '../src/components/Form'
 import Card from '../src/components/Card'
 import ThemeContext from '../src/contexts/ThemeContext'
 import { getVerifier } from '../src/api/verifier'
-import { createPost, deletePost, getPosts } from '../src/api/posts'
+import { createPost, deletePost, getPosts, getPost } from '../src/api/posts'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 import axios from '../src/api/axios'
-import DeleteModal from '../src/components/modals/DeleteModal'
+import ManageModal from '../src/components/modals/ManageModal'
 
 export default function Index({ postData, verifier }) {
   const [posts, setPosts] = useState(postData.posts.slice())
@@ -83,7 +83,15 @@ export default function Index({ postData, verifier }) {
       handleError(err)
     }
   }
-  const handleDelete = async (hash, reset) => {
+  const handleManage = async (hash, post, reset) => {
+    if (!post) {
+      try {
+        return await getPost(hash)
+      } catch (err) {
+        handleError(err)
+        return
+      }
+    }
     try {
       await deletePost(hash)
       reset()
@@ -104,7 +112,7 @@ export default function Index({ postData, verifier }) {
           <a onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? '밝은' : '어두운'} 테마
           </a>
-          <a onClick={() => handleModal('delete', {})}>제보 삭제</a>
+          <a onClick={() => handleModal('delete', {})}>제보 관리</a>
         </div>
       </div>
       <Form onSubmit={handleSubmit} verifier={verifier} />
@@ -182,10 +190,10 @@ export default function Index({ postData, verifier }) {
           word-break: break-word;
         }
       `}</style>
-      <DeleteModal
+      <ManageModal
         content={modal.delete}
         modalHandler={handleModal}
-        onSubmit={handleDelete}
+        onSubmit={handleManage}
       />
     </>
   )

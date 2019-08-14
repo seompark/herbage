@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import { FiArrowLeft } from 'react-icons/fi'
 import timeText from '../utils/timeText'
 
-function Card({ post }) {
+function Card({ post, isManage = false }) {
   const [showMore, setShowMore] = useState(false)
   const isLong =
     post.content.length > 250 || post.content.split('\n').length > 3
@@ -63,8 +63,9 @@ function Card({ post }) {
         .card {
           margin-top: 1rem;
           margin-bottom: 1rem;
-          padding: 2rem;
+          padding: ${isManage ? '1rem' : '2rem'};
           border-radius: 7.5px;
+          border: ${isManage ? '1px solid' : 'none'};
         }
 
         .card * {
@@ -121,7 +122,8 @@ Card.propTypes = {
     tag: PropTypes.string.isRequired,
     fbLink: PropTypes.string,
     createdAt: PropTypes.number
-  })
+  }),
+  isManage: PropTypes.bool
 }
 
 export default Card

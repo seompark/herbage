@@ -39,6 +39,18 @@ router.get(
   }
 )
 
+router.get(
+  '/:id',
+  async (ctx): Promise<void> => {
+    const post = await Post.findOne({ hash: ctx.params.id })
+
+    if (!post) throw new createError.NotFound()
+
+    ctx.status = 200
+    ctx.body = post
+  }
+)
+
 router.post(
   '/',
   validatorMiddleware(NewPost),

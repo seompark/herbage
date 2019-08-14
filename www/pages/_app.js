@@ -60,6 +60,9 @@ function ThemeWrapper({ children }) {
         form {
           background-color: ${isLight ? '#fff' : '#253542'};
         }
+        .card {
+          border-color: ${isLight ? '#e8f5e9' : '#161f27'} !important;
+        }
         a,
         strong {
           color: ${isLight ? '#4caf50' : '#0076d1'};

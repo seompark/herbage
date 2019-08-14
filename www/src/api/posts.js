@@ -33,6 +33,10 @@ export async function createPost({ title, content, answer, verifier, tag }) {
   })).data
 }
 
+export async function getPost(hash) {
+  return (await axios.get(`/api/posts/${hash}`)).data
+}
+
 export async function acceptPost({ id, fbLink }) {
   return (await axios.patch(`/api/posts/${id}`, {
     status: 'ACCEPTED',
