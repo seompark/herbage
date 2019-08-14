@@ -148,6 +148,9 @@ function Form({ onSubmit, verifier }) {
               />
             )}
           </button>
+          <a href="/policy" style={{ marginLeft: '1rem' }}>
+            게시 규정 >
+          </a>
         </>
       )}
       {spinAnimation.styles}

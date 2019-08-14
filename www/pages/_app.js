@@ -60,7 +60,8 @@ function ThemeWrapper({ children }) {
         form {
           background-color: ${isLight ? '#fff' : '#253542'};
         }
-        a {
+        a,
+        strong {
           color: ${isLight ? '#4caf50' : '#0076d1'};
         }
       `}</style>
