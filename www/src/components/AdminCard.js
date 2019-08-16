@@ -34,6 +34,7 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           hash: post.hash,
           tag: post.tag
         }}
+        isManage
       />
       <div className="card--admin">
         <div className="hash">{post.hash}</div>
