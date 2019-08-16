@@ -31,7 +31,8 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           content: post.content,
           fbLink: post.fbLink,
           createdAt: post.createdAt,
-          hash: post.hash
+          hash: post.hash,
+          tag: post.tag
         }}
       />
       <div className="card--admin">
@@ -77,7 +78,8 @@ AdminCard.propTypes = {
     status: PropTypes.string.isRequired,
     reason: PropTypes.string,
     history: PropTypes.array.isRequired,
-    hash: PropTypes.string
+    hash: PropTypes.string,
+    tag: PropTypes.string
   }),
   modalHandler: PropTypes.func,
   deleteHandler: PropTypes.func
