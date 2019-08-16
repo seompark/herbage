@@ -52,7 +52,7 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
         }
         .card {
           border-radius: 7.5px;
-          padding: 2rem;
+          padding: 1rem 2rem 2rem 2rem;
           margin-bottom: 2rem;
         }
         .hash {
