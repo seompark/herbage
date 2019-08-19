@@ -73,7 +73,7 @@ router.post(
     // https://stackoverflow.com/questions/19199872/best-practice-for-restful-post-response
     ctx.status = 201
     ctx.set('Location', `/api/posts/${result.id}`)
-    ctx.body = result.getPublicFields()
+    ctx.body = result.getAuthorFields()
   }
 )
 
