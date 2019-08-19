@@ -27,6 +27,9 @@ export interface PostPublicFields {
   fbLink?: string
   createdAt: number
   status: string
+}
+
+export interface PostAuthorFields extends PostPublicFields {
   hash: string
 }
 
@@ -133,6 +136,20 @@ class Post extends Typegoose {
 
   @instanceMethod
   public getPublicFields(this: InstanceType<Post>): PostPublicFields {
+    return {
+      id: this.id,
+      number: this.number,
+      title: this.title,
+      content: this.content,
+      tag: this.tag,
+      fbLink: this.fbLink,
+      createdAt: this.createdAt.getTime(),
+      status: this.status
+    }
+  }
+
+  @instanceMethod
+  public getAuthorFields(this: InstanceType<Post>): PostAuthorFields {
     return {
       id: this.id,
       number: this.number,
