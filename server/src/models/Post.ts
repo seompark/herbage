@@ -174,29 +174,31 @@ class Post extends Typegoose {
     } = { admin: false }
   ): Promise<Array<InstanceType<Post>>> {
     // 관리자는 오래된 글부터, 일반 사용자는 최신 글부터
-    const condition = {
-      // 다음 글의 _id: 관리자는 더 크고(커서보다 최신 글),
-      // 일반 사용자는 더 작음(커서보다 오래된 글).
-      _id: {
-        [options.admin ? '$gt' : '$lt']: Base64.decode(cursor)
-      },
-      status: PostStatus.Accepted
-    }
+    const condition = options.admin
+      ? {
+          // 다음 글의 _id: 관리자는 더 크고(커서보다 최신 글),
+          // 일반 사용자는 더 작음(커서보다 오래된 글).
+          _id: {
+            ['$gt']: Base64.decode(cursor)
+          }
+        }
+      : {
+          number: {
+            ['$lt']: cursor
+          },
+          status: PostStatus.Accepted
+        }
 
     if (!cursor) {
-      delete condition._id
-    }
-
-    // 관리자는 모든 글을 가져옴
-    if (options.admin) {
-      delete condition.status
+      if (options.admin) delete condition._id
+      else delete condition.number
     }
 
     const posts = await this.find({
       ...condition
       // ...options.condition
     })
-      .sort({ _id: options.admin ? 1 : -1 })
+      .sort(options.admin ? { _id: 1 } : { number: -1 })
       .limit(count)
       .exec()
     return posts
