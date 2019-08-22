@@ -66,5 +66,5 @@ export async function deletePost(arg) {
 }
 
 export async function getNewNumber() {
-  return (await axios.get('/api/posts/new-number')).data.newNumber
+  return (await axios.get('/api/posts/number')).data.newNumber
 }

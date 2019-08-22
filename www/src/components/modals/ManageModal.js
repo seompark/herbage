@@ -82,7 +82,9 @@ function ManageModal({ content, modalHandler, onSubmit }) {
             </div>
             <Card post={post} isManage />
             <StatusChip status={post.status} />
-            {post.reason && <span>{`거부 사유: ${post.reason}`}</span>}
+            {post.status === 'REJECTED' && (
+              <span>{`거부 사유: ${post.reason}`}</span>
+            )}
           </>
         )}
         {!(post && post.reason) && (

@@ -134,7 +134,7 @@ router.delete(
 )
 
 router.get(
-  '/new-number',
+  '/number',
   async (ctx): Promise<void> => {
     const newNumber =
       ((await Post.find()

@@ -31,12 +31,14 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           content: post.content,
           fbLink: post.fbLink,
           createdAt: post.createdAt,
-          hash: post.hash,
           tag: post.tag
         }}
         isManage
       />
       <div className="card--admin">
+        {post.status === 'REJECTED' && (
+          <div className="reason">거부 사유 : {post.reason}</div>
+        )}
         <div className="hash">{post.hash}</div>
         {post.status && <StatusChip status={post.status} />}
         <button onClick={openAcceptingModal}>승인</button>
@@ -55,7 +57,8 @@ function AdminCard({ post, modalHandler, deleteHandler }) {
           padding: 1rem 2rem 2rem 2rem;
           margin-bottom: 2rem;
         }
-        .hash {
+        .hash,
+        .reason {
           margin-bottom: 10px;
           word-break: break-word;
         }
