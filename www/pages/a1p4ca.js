@@ -9,7 +9,6 @@ import AdminCard from '../src/components/AdminCard'
 import AcceptModal from '../src/components/modals/AcceptModal'
 import RejectModal from '../src/components/modals/RejectModal'
 import ModifyModal from '../src/components/modals/ModifyModal'
-import FilterModal from '../src/components/modals/FilterModal'
 import { generateToken } from '../src/api/admin-token'
 import useInfiniteScroll from '../src/hooks/useInfiniteScroll'
 import {
@@ -20,7 +19,6 @@ import {
   deletePost
 } from '../src/api/posts'
 import axios from '../src/api/axios'
-import { MdFilterList } from 'react-icons/md'
 import { ACCEPTED, REJECTED, PENDING, DELETED } from '../src/utils/post-status'
 
 function Login() {
@@ -84,23 +82,21 @@ function Admin({ postData, userData }) {
   // eslint-disable-next-line
   const [cookies, setCookie, removeCookie] = useCookies(['token'])
 
-  const [loadedPosts, setLoadedPosts] = useState(postData.posts)
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState(postData.posts)
   const [cursor, setCursor] = useState(postData.cursor)
   const [hasNext, setHasNext] = useState(postData.hasNext)
-  const [filterState, setFilterState] = useState(0)
+  const [statusFilter, setStatusFilter] = useState(PENDING)
 
   const fetch = async () => {
-    const fetchedPosts = await getPosts(20, cursor)
+    const fetchedPosts = await getPosts(20, cursor, statusFilter)
     setCursor(fetchedPosts.data.cursor)
     setHasNext(fetchedPosts.data.hasNext)
-    setLoadedPosts([...loadedPosts, ...fetchedPosts.data.posts])
+    setPosts([...posts, ...fetchedPosts.data.posts])
   }
 
   const [isFetching, setIsFetching] = useInfiniteScroll(fetch, {
     threshold: 500,
-    hasNext,
-    filterState
+    hasNext
   })
   const [modal, setModal] = useState({
     accept: null,
@@ -108,35 +104,23 @@ function Admin({ postData, userData }) {
     modify: null,
     filter: null
   })
-  const [showPending, setShowPending] = useState(true)
-  const [showAccepted, setShowAccepted] = useState(false)
-  const [showRejected, setShowRejected] = useState(false)
-  const [showDeleted, setShowDeleted] = useState(false)
 
   useEffect(() => {
+    if (!isFetching || posts.length === 0) return
     setIsFetching(false)
-    filter()
-  }, [loadedPosts])
+  }, [posts])
+  useEffect(() => {
+    fetch()
+  }, [statusFilter])
   useEffect(() => {
     const token = cookies.token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    filter()
   }, [])
 
-  const filter = async () => {
-    const newPosts = loadedPosts.filter(p => {
-      const pending = showPending ? p.status === PENDING : false
-      const accepted = showAccepted ? p.status === ACCEPTED : false
-      const rejected = showRejected ? p.status === REJECTED : false
-      const deleted = showDeleted ? p.status === DELETED : false
-      return pending || accepted || rejected || deleted
-    })
-    if (newPosts.length === 0 && hasNext) {
-      fetch()
-      return
-    }
-    setFilterState(filterState + 1)
-    setPosts(newPosts)
+  const filter = async status => {
+    setPosts([])
+    setCursor()
+    setStatusFilter(status)
   }
 
   const handleModal = (modalName, content = null) => {
@@ -156,10 +140,10 @@ function Admin({ postData, userData }) {
   }
 
   const updatePosts = (id, data) => {
-    const updatedPosts = loadedPosts.map(post => {
+    const updatedPosts = posts.map(post => {
       return post.id === id ? data : post
     })
-    setLoadedPosts(updatedPosts)
+    setPosts(updatedPosts)
   }
 
   const handleError = err => {
@@ -220,10 +204,10 @@ function Admin({ postData, userData }) {
   const handleDelete = async post => {
     try {
       await deletePost(post._id)
-      const newPosts = loadedPosts.filter(p => {
+      const newPosts = posts.filter(p => {
         return post._id !== p._id
       })
-      setLoadedPosts(newPosts)
+      setPosts(newPosts)
       toast.success('성공적으로 삭제되었습니다.')
     } catch (err) {
       handleError(err)
@@ -238,9 +222,21 @@ function Admin({ postData, userData }) {
           <a onClick={logout}>로그아웃</a>
         </div>
       </div>
-      <span className="icon-filter" onClick={() => handleModal('filter', {})}>
-        <MdFilterList />
-      </span>
+      <div onChange={event => filter(event.target.value)}>
+        <input type="radio" name="status-filter" value={ACCEPTED} />
+        승인
+        <input
+          type="radio"
+          name="status-filter"
+          value={PENDING}
+          defaultChecked
+        />
+        대기
+        <input type="radio" name="status-filter" value={REJECTED} />
+        거부
+        <input type="radio" name="status-filter" value={DELETED} />
+        삭제
+      </div>
       <br />
       {posts.map((v, i) => (
         <AdminCard
@@ -333,17 +329,6 @@ function Admin({ postData, userData }) {
         post={modal.modify}
         modalHandler={handleModal}
         onSubmit={handleModify}
-      />
-      <FilterModal
-        post={modal.filter}
-        modalHandler={handleModal}
-        states={[
-          [showPending, setShowPending],
-          [showAccepted, setShowAccepted],
-          [showRejected, setShowRejected],
-          [showDeleted, setShowDeleted]
-        ]}
-        filter={filter}
       />
     </div>
   )

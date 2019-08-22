@@ -16,6 +16,10 @@ export class RequestQuery {
   public count: number
 
   @Expose()
+  @IsString()
+  public status: string
+
+  @Expose()
   @IsOptional()
   @IsBase64()
   public cursor?: string

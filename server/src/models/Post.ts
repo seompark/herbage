@@ -195,8 +195,8 @@ class Post extends Typegoose {
     }
 
     const posts = await this.find({
-      ...condition
-      // ...options.condition
+      ...condition,
+      ...options.condition
     })
       .sort(options.admin ? { _id: 1 } : { number: -1 })
       .limit(count)

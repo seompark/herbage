@@ -1,11 +1,17 @@
 import axios from './axios'
 
-export async function getPosts(count = 10, cursor, { safe } = { safe: false }) {
+export async function getPosts(
+  count = 10,
+  cursor,
+  status = 'PENDING',
+  { safe } = { safe: false }
+) {
   try {
     return await axios.get('/api/posts', {
       params: {
         count,
-        cursor
+        cursor,
+        status
       }
     })
   } catch (err) {

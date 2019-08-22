@@ -24,7 +24,7 @@ router.get(
     const posts = await Post.getList(data.count, data.cursor, {
       admin: ctx.isAdmin,
       condition: ctx.isAdmin && {
-        status: PostStatus.Pending
+        status: data.status
       }
     })
 
