@@ -174,12 +174,14 @@ class Post extends Typegoose {
     } = { admin: false }
   ): Promise<Array<InstanceType<Post>>> {
     // 관리자는 오래된 글부터, 일반 사용자는 최신 글부터
+    const isAdminAndNotPending =
+      options.admin && (options.condition || {}).status !== PostStatus.Pending
     const condition = options.admin
       ? {
           // 다음 글의 _id: 관리자는 더 크고(커서보다 최신 글),
           // 일반 사용자는 더 작음(커서보다 오래된 글).
           _id: {
-            ['$gt']: Base64.decode(cursor)
+            [isAdminAndNotPending ? '$lt' : '$gt']: Base64.decode(cursor)
           }
         }
       : {
@@ -198,7 +200,9 @@ class Post extends Typegoose {
       ...condition,
       ...options.condition
     })
-      .sort(options.admin ? { _id: 1 } : { number: -1 })
+      .sort(
+        options.admin ? { _id: isAdminAndNotPending ? -1 : 1 } : { number: -1 }
+      )
       .limit(count)
       .exec()
     return posts
