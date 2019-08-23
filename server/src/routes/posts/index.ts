@@ -27,7 +27,6 @@ router.get(
         status: data.status
       }
     })
-
     ctx.status = 200
     ctx.body = {
       posts: ctx.isAdmin
@@ -41,6 +40,19 @@ router.get(
           : null,
       hasNext: posts.length === data.count
     }
+  }
+)
+
+router.get(
+  '/number',
+  async (ctx): Promise<void> => {
+    const newNumber =
+      ((await Post.find()
+        .sort({ number: -1 })
+        .limit(1)
+        .exec())[0].number || 0) + 1
+    ctx.status = 200
+    ctx.body = { newNumber }
   }
 )
 
@@ -130,19 +142,6 @@ router.delete(
     ctx.isAdmin ? await post.remove() : await post.setDeleted()
 
     ctx.status = 200
-  }
-)
-
-router.get(
-  '/number',
-  async (ctx): Promise<void> => {
-    const newNumber =
-      ((await Post.find()
-        .sort({ number: -1 })
-        .limit(1)
-        .exec())[0].number || 0) + 1
-    ctx.status = 200
-    ctx.body = { newNumber }
   }
 )
 

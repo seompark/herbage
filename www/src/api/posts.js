@@ -1,9 +1,10 @@
 import axios from './axios'
+import { PENDING } from '../utils/post-status'
 
 export async function getPosts(
   count = 10,
   cursor,
-  status = 'PENDING',
+  status = PENDING,
   { safe } = { safe: false }
 ) {
   try {

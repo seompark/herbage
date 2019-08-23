@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FiArrowLeft } from 'react-icons/fi'
 import timeText from '../utils/timeText'
 

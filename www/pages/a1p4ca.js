@@ -109,13 +109,15 @@ function Admin({ postData, userData }) {
     if (!isFetching || posts.length === 0) return
     setIsFetching(false)
   }, [posts])
-  useEffect(() => {
-    fetch()
-  }, [statusFilter])
+
   useEffect(() => {
     const token = cookies.token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
   }, [])
+
+  useEffect(() => {
+    fetch()
+  }, [statusFilter])
 
   const filter = async status => {
     setPosts([])
@@ -315,11 +317,13 @@ function Admin({ postData, userData }) {
           font-size: x-large;
         }
       `}</style>
-      <AcceptModal
-        post={modal.accept}
-        modalHandler={handleModal}
-        onSubmit={handleAccept}
-      />
+      {modal.accept && (
+        <AcceptModal
+          post={modal.accept}
+          modalHandler={handleModal}
+          onSubmit={handleAccept}
+        />
+      )}
       <RejectModal
         post={modal.reject}
         modalHandler={handleModal}
@@ -387,7 +391,7 @@ A1P4CA.getInitialProps = async ctx => {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
   try {
-    const postData = await getPosts(15)
+    const postData = await getPosts(15, null, PENDING)
     const userData = jwt.decode(token)
 
     return {
